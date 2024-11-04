@@ -28,7 +28,11 @@ public class EntityModel {
         b.move(dX, dY);
     }
 
-    public Box contains(double x, double y) {
+    public boolean contains(double x, double y) {
+        return boxes.stream().anyMatch(e -> e.contains(x,y));
+    }
+
+    public Box whichBox(double x, double y) {
         return boxes.stream()
                 .filter(e -> e.contains(x, y))
                 .findFirst()
