@@ -2,12 +2,12 @@ package org.example.assignment3;
 
 import java.util.ArrayList;
 
-public class Model {
+public class EntityModel {
 
     private final ArrayList<Box> boxes;
     private final ArrayList<Subscriber> subs;
 
-    public Model() {
+    public EntityModel() {
         boxes = new ArrayList<>();
         subs = new ArrayList<>();
     }
