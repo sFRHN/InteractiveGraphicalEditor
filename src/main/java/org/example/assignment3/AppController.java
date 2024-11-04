@@ -70,6 +70,7 @@ public class AppController {
         @Override
         public void handleReleased(MouseEvent event) {
             iModel.setSelected(null);
+            model.notifySubscribers();
             currentState = ready;
         }
 
