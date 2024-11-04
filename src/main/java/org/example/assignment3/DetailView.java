@@ -45,6 +45,8 @@ public class DetailView extends StackPane implements Subscriber{
             }
             gc.fillRect(entity.getX(), entity.getY(),
                         entity.getWidth(), entity.getHeight());
+            gc.strokeRect(entity.getX(), entity.getY(),
+                    entity.getWidth(), entity.getHeight());
         });
     }
 
