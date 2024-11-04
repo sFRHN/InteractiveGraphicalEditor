@@ -19,6 +19,11 @@ public class Box {
         this.y += dY;
     }
 
+    public void changeSize(double w, double h) {
+        this.width += w;
+        this.height += h;
+    }
+
     public boolean contains(double mx, double my) {
         return (this.x <= mx && mx <= this.x + this.width) &&
                 (this.y <= my && my <= this.y + this.height);
