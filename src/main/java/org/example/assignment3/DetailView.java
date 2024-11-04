@@ -1,5 +1,6 @@
 package org.example.assignment3;
 
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
@@ -11,12 +12,28 @@ public class DetailView extends StackPane implements Subscriber{
     GraphicsContext gc;
     EntityModel model;
     InteractionModel iModel;
+    Canvas myCanvas;
 
     public DetailView() {
         width = 700;
         height = 500;
-        Canvas myCanvas = new Canvas(width, height);
+        myCanvas = new Canvas(width, height);
         gc = myCanvas.getGraphicsContext2D();
+
+        this.widthProperty().addListener((observable, oldValue, newValue) -> {
+           myCanvas.setWidth(newValue.doubleValue());
+           draw();
+        });
+
+        this.heightProperty().addListener((observable, oldValue, newValue) -> {
+            myCanvas.setHeight(newValue.doubleValue());
+            draw();
+        });
+
+        Platform.runLater(() -> {
+            myCanvas.requestFocus();
+        });
+
         this.getChildren().add(myCanvas);
     }
 
@@ -32,10 +49,11 @@ public class DetailView extends StackPane implements Subscriber{
         setOnMousePressed(controller::handlePressed);
         setOnMouseDragged(controller::handleDragged);
         setOnMouseReleased(controller::handleReleased);
+        myCanvas.setOnKeyPressed(controller::handleKeyPressed);
     }
 
     public void draw() {
-        gc.clearRect(0, 0, width, height);
+        gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
         model.getBoxes().forEach(entity -> {
             if (iModel.getSelected() == entity) {
                 gc.setFill(Color.ORANGE);
