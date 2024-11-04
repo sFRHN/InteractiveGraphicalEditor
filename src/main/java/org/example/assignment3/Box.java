@@ -14,9 +14,9 @@ public class Box {
 
     }
 
-    public void move(double dx, double dy) {
-        this.x += dx;
-        this.y += dy;
+    public void move(double dX, double dY) {
+        this.x += dX;
+        this.y += dY;
     }
 
     public boolean contains(double mx, double my) {
