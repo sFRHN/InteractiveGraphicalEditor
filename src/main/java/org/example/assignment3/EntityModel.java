@@ -18,14 +18,17 @@ public class EntityModel {
 
     public void addBox(double x, double y, double width, double height) {
         boxes.add(new Box(x, y, width, height));
+        notifySubscribers();
     }
 
     public void deleteBox(Box b) {
         boxes.remove(b);
+        notifySubscribers();
     }
 
     public void moveBox(Box b, double dX, double dY) {
         b.move(dX, dY);
+        notifySubscribers();
     }
 
     public boolean contains(double x, double y) {
@@ -43,7 +46,7 @@ public class EntityModel {
         subs.add(sub);
     }
 
-    public void notifySubscriber() {
+    public void notifySubscribers() {
         subs.forEach(Subscriber::modelChanged);
     }
 
