@@ -83,6 +83,7 @@ public class AppController {
             prevX = event.getX();
             prevY = event.getY();
             iModel.getSelected().changeSize(dX, dY);
+            model.notifySubscribers();
         }
 
         @Override
