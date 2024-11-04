@@ -48,6 +48,7 @@ public class AppController {
 
             if (model.contains(event.getX(), event.getY())) {
                 iModel.setSelected(model.whichBox(event.getX(), event.getY()));
+                model.notifySubscribers();
                 currentState = dragging;
             }
             else {
