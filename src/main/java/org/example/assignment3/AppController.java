@@ -1,5 +1,6 @@
 package org.example.assignment3;
 
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 public class AppController {
@@ -37,6 +38,20 @@ public class AppController {
 
     public void handleReleased(MouseEvent event) {
         currentState.handleReleased(event);
+    }
+
+    public void handleKeyPressed(KeyEvent event) {
+        switch (event.getCode()) {
+            case DELETE:
+            case BACK_SPACE:
+                if (iModel.getSelected() != null) {
+                    model.deleteBox(iModel.getSelected());
+                    iModel.setSelected(null);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     ControllerState ready = new ControllerState() {
