@@ -16,6 +16,7 @@ public class MainUI extends StackPane {
         View.setiModel(iModel);
         View.setupEvents(controller);
         model.addSubscriber(View);
+        iModel.addSubscriber(View);
 
         this.getChildren().add(View);
     }
