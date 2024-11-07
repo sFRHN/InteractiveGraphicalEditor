@@ -1,5 +1,6 @@
 package org.example.assignment3;
 
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
@@ -8,12 +9,14 @@ public class AppController {
     private EntityModel model;
     private InteractionModel iModel;
     private ControllerState currentState;
-    private double prevX, prevY, dX, dY;
+    private double prevX, prevY, dX, dY, adjustedX, adjustedY;
 
     public abstract static class ControllerState {
         void handlePressed(MouseEvent event) {}
         void handleDragged(MouseEvent event) {}
         void handleReleased(MouseEvent event) {}
+        void handleKeyPressed(KeyEvent event) {}
+        void handleKeyReleased(KeyEvent event) {}
     }
 
     public AppController() {
@@ -41,17 +44,11 @@ public class AppController {
     }
 
     public void handleKeyPressed(KeyEvent event) {
-        switch (event.getCode()) {
-            case DELETE:
-            case BACK_SPACE:
-                if (iModel.getSelected() != null) {
-                    model.deleteBox(iModel.getSelected());
-                    iModel.setSelected(null);
-                }
-                break;
-            default:
-                break;
-        }
+        currentState.handleKeyPressed(event);
+    }
+
+    public void handleKeyReleased(KeyEvent event) {
+        currentState.handleKeyReleased(event);
     }
 
     ControllerState ready = new ControllerState() {
@@ -61,13 +58,33 @@ public class AppController {
             prevX = event.getX();
             prevY = event.getY();
 
-            if (model.contains(event.getX(), event.getY())) {
-                iModel.setSelected(model.whichBox(event.getX(), event.getY()));
+            adjustedX = event.getX() - iModel.getViewLeft();
+            adjustedY = event.getY() - iModel.getViewTop();
+
+            if (model.contains(adjustedX, adjustedY)) {
+                iModel.setSelected(model.whichBox(adjustedX, adjustedY));
                 model.notifySubscribers();
                 currentState = dragging;
             }
             else {
                 currentState = preparing;
+            }
+        }
+
+        @Override
+        public void handleKeyPressed(KeyEvent event) {
+            switch (event.getCode()) {
+                case DELETE:
+                case BACK_SPACE:
+                    if (iModel.getSelected() != null) {
+                        model.deleteBox(iModel.getSelected());
+                        iModel.setSelected(null);
+                    }
+                    break;
+                case SHIFT:
+                    currentState = panning;
+                default:
+                    break;
             }
         }
 
@@ -77,8 +94,8 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-            model.addBox(event.getX(), event.getY(), 0,0);
-            iModel.setSelected(model.whichBox(event.getX(), event.getY()));
+            model.addBox(adjustedX, adjustedY, 0,0);
+            iModel.setSelected(model.whichBox(adjustedX, adjustedY));
             currentState = creating;
         }
 
@@ -122,6 +139,32 @@ public class AppController {
 
         public void handleReleased(MouseEvent event) {
             currentState = ready;
+        }
+
+    };
+
+    ControllerState panning = new ControllerState() {
+
+        @Override
+        public void handlePressed(MouseEvent event) {
+            prevX = event.getX();
+            prevY = event.getY();
+        }
+
+        @Override
+        public void handleDragged(MouseEvent event) {
+            dX = event.getX() - prevX;
+            dY = event.getY() - prevY;
+            prevX = event.getX();
+            prevY = event.getY();
+            iModel.moveViewport(dX, dY);
+        }
+
+        @Override
+        public void handleKeyReleased(KeyEvent event) {
+            if (event.getCode() == KeyCode.SHIFT) {
+                currentState = ready;
+            }
         }
 
     };
