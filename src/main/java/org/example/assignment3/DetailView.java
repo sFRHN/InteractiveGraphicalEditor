@@ -8,15 +8,15 @@ import javafx.scene.paint.Color;
 
 public class DetailView extends StackPane implements Subscriber{
 
-    double width, height;
-    GraphicsContext gc;
-    EntityModel model;
-    InteractionModel iModel;
-    Canvas myCanvas;
+    private double width, height;
+    private final GraphicsContext gc;
+    private EntityModel model;
+    private InteractionModel iModel;
+    private final Canvas myCanvas;
 
     public DetailView() {
-        width = 700;
-        height = 500;
+        width = 800;
+        height = 800;
         myCanvas = new Canvas(width, height);
         gc = myCanvas.getGraphicsContext2D();
 
@@ -50,10 +50,13 @@ public class DetailView extends StackPane implements Subscriber{
         setOnMouseDragged(controller::handleDragged);
         setOnMouseReleased(controller::handleReleased);
         myCanvas.setOnKeyPressed(controller::handleKeyPressed);
+        myCanvas.setOnKeyReleased(controller::handleKeyReleased);
     }
 
     public void draw() {
         gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
+        gc.save();
+        gc.translate(iModel.getViewLeft(), iModel.getViewTop());
         model.getBoxes().forEach(entity -> {
             if (iModel.getSelected() == entity) {
                 gc.setFill(Color.ORANGE);
@@ -66,6 +69,7 @@ public class DetailView extends StackPane implements Subscriber{
             gc.strokeRect(entity.getX(), entity.getY(),
                     entity.getWidth(), entity.getHeight());
         });
+        gc.restore();
     }
 
     public void modelChanged() {
