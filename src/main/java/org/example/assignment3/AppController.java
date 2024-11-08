@@ -83,6 +83,7 @@ public class AppController {
                     break;
                 case SHIFT:
                     currentState = panning;
+                    break;
                 default:
                     break;
             }
