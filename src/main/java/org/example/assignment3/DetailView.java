@@ -10,8 +10,8 @@ public class DetailView extends StackPane implements Subscriber{
 
     private double width, height;
     private final GraphicsContext gc;
-    private EntityModel model;
-    private InteractionModel iModel;
+    protected EntityModel model;
+    protected InteractionModel iModel;
     private final Canvas myCanvas;
 
     public DetailView() {
@@ -30,10 +30,6 @@ public class DetailView extends StackPane implements Subscriber{
             draw();
         });
 
-        Platform.runLater(() -> {
-            myCanvas.requestFocus();
-        });
-
         this.getChildren().add(myCanvas);
     }
 
@@ -49,8 +45,8 @@ public class DetailView extends StackPane implements Subscriber{
         setOnMousePressed(controller::handlePressed);
         setOnMouseDragged(controller::handleDragged);
         setOnMouseReleased(controller::handleReleased);
-        myCanvas.setOnKeyPressed(controller::handleKeyPressed);
-        myCanvas.setOnKeyReleased(controller::handleKeyReleased);
+        setOnKeyPressed(controller::handleKeyPressed);
+        setOnKeyReleased(controller::handleKeyReleased);
     }
 
     public void draw() {
@@ -70,6 +66,14 @@ public class DetailView extends StackPane implements Subscriber{
                     entity.getWidth(), entity.getHeight());
         });
         gc.restore();
+    }
+
+    public double ViewWidth() {
+        return width;
+    }
+
+    public double ViewHeight() {
+        return height;
     }
 
     public void modelChanged() {
