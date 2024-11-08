@@ -60,10 +60,21 @@ public class DetailView extends StackPane implements Subscriber{
             else {
                 gc.setFill(Color.BLUE);
             }
-            gc.fillRect(entity.getX(), entity.getY(),
-                        entity.getWidth(), entity.getHeight());
-            gc.strokeRect(entity.getX(), entity.getY(),
-                    entity.getWidth(), entity.getHeight());
+            gc.fillRect(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
+            gc.strokeRect(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
+
+            if (iModel.getSelected() == entity) {
+                gc.setFill(Color.WHITE);
+                double circleRadius = 5;
+                gc.strokeOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 10, 10);
+                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 10, 10);
+                gc.strokeOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
+                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
+                gc.fillOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 10, 10);
+                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 10, 10);
+                gc.fillOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
+                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
+            }
         });
         gc.restore();
     }
