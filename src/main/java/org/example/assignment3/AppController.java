@@ -113,11 +113,15 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-            dX = event.getX() - prevX;
-            dY = event.getY() - prevY;
-            prevX = event.getX();
-            prevY = event.getY();
-            iModel.getSelected().changeSize(dX, dY);
+            double newX = Math.min(event.getX(), prevX);
+            double newY = Math.min(event.getY(), prevY);
+            double newWidth = Math.abs(event.getX() - prevX);
+            double newHeight = Math.abs(event.getY() - prevY);
+
+            iModel.getSelected().changePosition(newX, newY);
+            iModel.getSelected().setWidth(newWidth);
+            iModel.getSelected().setHeight(newHeight);
+
             model.notifySubscribers();
         }
 
