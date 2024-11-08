@@ -17,6 +17,7 @@ public class MiniView extends DetailView {
         gc = myCanvas.getGraphicsContext2D();
         this.setAlignment(javafx.geometry.Pos.TOP_LEFT);
         this.getChildren().add(myCanvas);
+        opacityProperty().set(0.5);
     }
 
     @Override
@@ -24,11 +25,31 @@ public class MiniView extends DetailView {
         double scale = size / iModel.getWorldSize();
 
         gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
-        gc.strokeRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
+
         gc.save();
+        gc.setFill(Color.LIGHTGRAY);
+        gc.fillRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
+        gc.strokeRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
 
         // Apply scaling transformation
         gc.scale(scale, scale);
+
+        // Draw the visible area rectangle
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(1.0 / scale);
+        gc.strokeRect(
+                -iModel.getViewLeft(),
+                -iModel.getViewTop(),
+                ViewWidth(),
+                ViewHeight()
+        );
+        gc.setFill(Color.YELLOW);
+        gc.fillRect(
+                -iModel.getViewLeft(),
+                -iModel.getViewTop(),
+                ViewWidth(),
+                ViewHeight()
+        );
 
         model.getBoxes().forEach(entity -> {
             if (iModel.getSelected() == entity) {
@@ -41,16 +62,6 @@ public class MiniView extends DetailView {
             gc.strokeRect(entity.getX(), entity.getY(),
                     entity.getWidth(), entity.getHeight());
         });
-
-        // Draw the visible area rectangle
-        gc.setStroke(Color.RED);
-        gc.setLineWidth(1.0 / scale);
-        gc.strokeRect(
-                -iModel.getViewLeft(),
-                -iModel.getViewTop(),
-                ViewWidth(),
-                ViewHeight()
-        );
 
         gc.restore();
     }
