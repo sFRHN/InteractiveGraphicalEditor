@@ -19,9 +19,9 @@ public class Box {
         this.y += dY;
     }
 
-    public void changeSize(double w, double h) {
-        this.width += w;
-        this.height += h;
+    public void changePosition(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
     public boolean contains(double mx, double my) {
