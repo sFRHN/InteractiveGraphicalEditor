@@ -35,8 +35,29 @@ public class InteractionModel {
     }
 
     public void moveViewport(double dX, double dY) {
-        viewLeft += dX;
-        viewTop += dY;
+
+        double newViewLeft = viewLeft + dX;
+        if (newViewLeft > 0) {
+            viewLeft = 0;
+        }
+        else if (newViewLeft < -(worldSize - 800)) {
+            viewLeft = -(worldSize - 800);
+        }
+        else {
+            viewLeft = newViewLeft;
+        }
+
+        double newViewTop = viewTop + dY;
+        if (newViewTop > 0) {
+            viewTop = 0;
+        }
+        else if (newViewTop < -(worldSize - 800)) {
+            viewTop = -(worldSize - 800);
+        }
+        else {
+            viewTop = newViewTop;
+        }
+
         notifySubscribers();
     }
 
