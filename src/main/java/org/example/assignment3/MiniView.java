@@ -12,8 +12,9 @@ public class MiniView extends DetailView {
 
 
     public MiniView() {
-//        super();
+        super();
         myCanvas = new Canvas(size, size);
+        this.setPrefSize(size, size);
         gc = myCanvas.getGraphicsContext2D();
         this.setAlignment(javafx.geometry.Pos.TOP_LEFT);
         this.setPrefSize(size, size);
