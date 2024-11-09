@@ -65,7 +65,7 @@ public class DetailView extends StackPane implements Subscriber{
 
             if (iModel.getSelected() == entity) {
                 gc.setFill(Color.WHITE);
-                double circleRadius = 5;
+                double circleRadius = iModel.getHandleRadius();
                 gc.strokeOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 10, 10);
                 gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 10, 10);
                 gc.strokeOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
