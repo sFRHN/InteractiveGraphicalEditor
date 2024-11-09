@@ -61,7 +61,11 @@ public class AppController {
             adjustedX = event.getX() - iModel.getViewLeft();
             adjustedY = event.getY() - iModel.getViewTop();
 
-            if (model.contains(adjustedX, adjustedY)) {
+            if (iModel.getSelected() != null && iModel.onHandle(adjustedX, adjustedY)) {
+                currentState = resizing;
+            }
+
+            else if (model.contains(adjustedX, adjustedY)) {
                 iModel.setSelected(model.whichBox(adjustedX, adjustedY));
                 model.notifySubscribers();
                 currentState = dragging;
@@ -171,6 +175,53 @@ public class AppController {
                 currentState = ready;
             }
         }
+
+    };
+
+    ControllerState resizing = new ControllerState() {
+
+        @Override
+        public void handleDragged(MouseEvent event) {
+            System.out.println("resizing");
+            double newX = event.getX() - iModel.getViewLeft();
+            double newY = event.getY() - iModel.getViewTop();
+            double dX = prevX - adjustedX;
+            double dY = prevY - adjustedY;
+
+            switch (iModel.whichHandle(adjustedX, adjustedY)) {
+                case "topLeftHandle":
+                    iModel.getSelected().changePosition(iModel.getSelected().getX() + dX, iModel.getSelected().getY() + dY);
+                    iModel.getSelected().setWidth(iModel.getSelected().getWidth() - dX);
+                    iModel.getSelected().setHeight(iModel.getSelected().getHeight() - dY);
+                    break;
+                case "topRightHandle":
+                    iModel.getSelected().changePosition(iModel.getSelected().getX(), iModel.getSelected().getY() + dY);
+                    iModel.getSelected().setWidth(iModel.getSelected().getWidth() + dX);
+                    iModel.getSelected().setHeight(iModel.getSelected().getHeight() - dY);
+                    break;
+                case "bottomLeftHandle":
+                    iModel.getSelected().changePosition(iModel.getSelected().getX() + dX, iModel.getSelected().getY());
+                    iModel.getSelected().setWidth(iModel.getSelected().getWidth() - dX);
+                    iModel.getSelected().setHeight(iModel.getSelected().getHeight() + dY);
+                    break;
+                case "bottomRightHandle":
+                    iModel.getSelected().setWidth(iModel.getSelected().getWidth() + dX);
+                    iModel.getSelected().setHeight(iModel.getSelected().getHeight() + dY);
+                    break;
+                default:
+                    break;
+            }
+
+            adjustedX = newX;
+            adjustedY = newY;
+            model.notifySubscribers();
+        }
+
+        @Override
+        public void handleReleased(MouseEvent event) {
+            currentState = ready;
+        }
+
 
     };
 

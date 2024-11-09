@@ -1,7 +1,4 @@
 package org.example.assignment3;
-
-import javafx.scene.input.MouseEvent;
-
 import java.util.ArrayList;
 
 public class InteractionModel {
@@ -11,6 +8,7 @@ public class InteractionModel {
     private final int worldSize = 2000;
     private double viewLeft = 0;
     private double viewTop = 0;
+    private final double handleRadius = 5;
 
     public InteractionModel() {
         selected = null;
@@ -21,18 +19,12 @@ public class InteractionModel {
     public int getWorldSize() { return this.worldSize; }
     public double getViewLeft() { return this.viewLeft; }
     public double getViewTop() { return this.viewTop; }
+    public double getHandleRadius() { return handleRadius; }
 
-    public void setSelected(Box b) {
-        this.selected = b;
-    }
 
-    public void addSubscriber(Subscriber sub) {
-        subs.add(sub);
-    }
-
-    private void notifySubscribers() {
-        subs.forEach(Subscriber::modelChanged);
-    }
+    public void setSelected(Box b) { this.selected = b; }
+    public void addSubscriber(Subscriber sub) { subs.add(sub); }
+    private void notifySubscribers() { subs.forEach(Subscriber::modelChanged); }
 
     public void moveViewport(double dX, double dY) {
 
@@ -59,6 +51,66 @@ public class InteractionModel {
         }
 
         notifySubscribers();
+    }
+
+    public boolean onHandle(double mx, double my) {
+        if (topLeftHandle(mx, my)) {
+            System.out.println("topLeftHandle");
+        }
+        else if (topRightHandle(mx, my)) {
+            System.out.println("topRightHandle");
+        }
+        else if (bottomLeftHandle(mx, my)) {
+            System.out.println("bottomLeftHandle");
+        }
+        else if (bottomRightHandle(mx, my)) {
+            System.out.println("bottomRightHandle");
+        }
+        return selected != null && (topLeftHandle(mx, my) || topRightHandle(mx, my) || bottomLeftHandle(mx, my) || bottomRightHandle(mx, my));
+    }
+
+    public String whichHandle(double mx, double my) {
+        if (topLeftHandle(mx, my)) {
+            return "topLeftHandle";
+        }
+        else if (topRightHandle(mx, my)) {
+            return "topRightHandle";
+        }
+        else if (bottomLeftHandle(mx, my)) {
+            return "bottomLeftHandle";
+        }
+        else if (bottomRightHandle(mx, my)) {
+            return "bottomRightHandle";
+        }
+        return "none";
+    }
+
+    public boolean topLeftHandle(double mx, double my) {
+        double x = selected.getX();
+        double y = selected.getY();
+        return Math.hypot(x - mx, y - my) <= handleRadius;
+    }
+
+    public boolean topRightHandle(double mx, double my) {
+        double x = selected.getX();
+        double y = selected.getY();
+        double width = selected.getWidth();
+        return Math.hypot(x + width - mx, y - my) <= handleRadius;
+    }
+
+    public boolean bottomLeftHandle(double mx, double my) {
+        double x = selected.getX();
+        double y = selected.getY();
+        double height = selected.getHeight();
+        return Math.hypot(x - mx, y + height - my) <= handleRadius;
+    }
+
+    public boolean bottomRightHandle(double mx, double my) {
+        double x = selected.getX();
+        double y = selected.getY();
+        double width = selected.getWidth();
+        double height = selected.getHeight();
+        return Math.hypot(x + width - mx, y + height - my) <= handleRadius;
     }
 
 }
