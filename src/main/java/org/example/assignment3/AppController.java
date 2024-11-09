@@ -185,8 +185,8 @@ public class AppController {
             System.out.println("resizing");
             double newX = event.getX() - iModel.getViewLeft();
             double newY = event.getY() - iModel.getViewTop();
-            double dX = prevX - adjustedX;
-            double dY = prevY - adjustedY;
+            double dX = newX - adjustedX;
+            double dY = newY - adjustedY;
 
             switch (iModel.whichHandle(adjustedX, adjustedY)) {
                 case "topLeftHandle":
