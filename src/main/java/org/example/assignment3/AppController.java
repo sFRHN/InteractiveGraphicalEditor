@@ -182,7 +182,6 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-            System.out.println("resizing");
             double newX = event.getX() - iModel.getViewLeft();
             double newY = event.getY() - iModel.getViewTop();
             double dX = newX - adjustedX;
