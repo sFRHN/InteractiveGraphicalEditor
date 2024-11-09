@@ -8,6 +8,7 @@ public class InteractionModel {
     private final int worldSize = 2000;
     private double viewLeft = 0;
     private double viewTop = 0;
+    private double viewWidth, viewHeight;
     private final double handleRadius = 5;
 
     public InteractionModel() {
@@ -20,6 +21,8 @@ public class InteractionModel {
     public double getViewLeft() { return this.viewLeft; }
     public double getViewTop() { return this.viewTop; }
     public double getHandleRadius() { return handleRadius; }
+    public void setViewWidth(double w) { this.viewWidth = w; }
+    public void setViewHeight(double h) { this.viewHeight = h; }
 
 
     public void setSelected(Box b) { this.selected = b; }
@@ -32,8 +35,8 @@ public class InteractionModel {
         if (newViewLeft > 0) {
             viewLeft = 0;
         }
-        else if (newViewLeft < -(worldSize - 800)) {
-            viewLeft = -(worldSize - 800);
+        else if (newViewLeft < -(worldSize - viewWidth)) {
+            viewLeft = -(worldSize - viewWidth);
         }
         else {
             viewLeft = newViewLeft;
@@ -43,8 +46,8 @@ public class InteractionModel {
         if (newViewTop > 0) {
             viewTop = 0;
         }
-        else if (newViewTop < -(worldSize - 800)) {
-            viewTop = -(worldSize - 800);
+        else if (newViewTop < -(worldSize - viewHeight)) {
+            viewTop = -(worldSize - viewHeight);
         }
         else {
             viewTop = newViewTop;

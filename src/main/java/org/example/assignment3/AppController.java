@@ -117,8 +117,8 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-            double newX = Math.min(event.getX(), prevX);
-            double newY = Math.min(event.getY(), prevY);
+            double newX = Math.min(event.getX() - iModel.getViewLeft(), prevX - iModel.getViewLeft());
+            double newY = Math.min(event.getY() - iModel.getViewTop(), prevY - iModel.getViewTop());
             double newWidth = Math.abs(event.getX() - prevX);
             double newHeight = Math.abs(event.getY() - prevY);
 

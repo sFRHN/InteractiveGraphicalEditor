@@ -12,10 +12,11 @@ public class MiniView extends DetailView {
 
 
     public MiniView() {
-        super();
+//        super();
         myCanvas = new Canvas(size, size);
         gc = myCanvas.getGraphicsContext2D();
         this.setAlignment(javafx.geometry.Pos.TOP_LEFT);
+        this.setPrefSize(size, size);
         this.getChildren().add(myCanvas);
         opacityProperty().set(0.5);
     }

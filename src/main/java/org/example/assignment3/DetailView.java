@@ -22,11 +22,15 @@ public class DetailView extends StackPane implements Subscriber{
 
         this.widthProperty().addListener((observable, oldValue, newValue) -> {
            myCanvas.setWidth(newValue.doubleValue());
+           this.width = newValue.doubleValue();
+           iModel.setViewWidth(newValue.doubleValue());
            draw();
         });
 
         this.heightProperty().addListener((observable, oldValue, newValue) -> {
             myCanvas.setHeight(newValue.doubleValue());
+            this.height = newValue.doubleValue();
+            iModel.setViewHeight(newValue.doubleValue());
             draw();
         });
 
