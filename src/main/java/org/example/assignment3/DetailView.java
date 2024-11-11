@@ -78,7 +78,7 @@ public class DetailView extends StackPane implements Subscriber{
 
     }
 
-    public void drawPortal(Portal portal) {
+    private void drawPortal(Portal portal) {
 
         gc.save();
         gc.beginPath();
