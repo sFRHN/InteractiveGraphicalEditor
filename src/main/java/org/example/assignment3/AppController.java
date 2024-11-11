@@ -9,7 +9,7 @@ public class AppController {
     private EntityModel model;
     private InteractionModel iModel;
     private ControllerState currentState;
-    private double prevX, prevY, dX, dY, adjustedX, adjustedY;
+    private double prevX, prevY, dX, dY, adjustedX, adjustedY, portalX, portalY;
 
     public abstract static class ControllerState {
         void handlePressed(MouseEvent event) {}
@@ -231,25 +231,27 @@ public class AppController {
             adjustedX = event.getX() + iModel.getViewLeft();
             adjustedY = event.getY() + iModel.getViewTop();
 
-            System.out.println("PREADY - View to World " + adjustedX + ", " + adjustedY);
-
 
             // If clicked on a portal
             if (model.whichBox(adjustedX, adjustedY) instanceof Portal portal) {
 
                 // Find point inside the portal
-                double portalX = adjustedX - portal.getX();
-                double portalY = adjustedY - portal.getY();
-
-                System.out.println("Click inside portal at " + portalX + ", " + portalY);
+                portalX = adjustedX - portal.getX() - portal.getPLeft();
+                portalY = adjustedY - portal.getY() - portal.getPTop();
 
                 // Convert to world coordinates
                 portalX /= portal.getScale();
                 portalY /= portal.getScale();
-                portalX += portal.getPLeft();
-                portalY += portal.getPTop();
 
-                System.out.println("Portal to World " + portalX + " " + portalY);
+                iModel.setSelected(model.whichBox(adjustedX, adjustedY));
+
+                if (model.contains(portalX, portalY)){
+                    iModel.setSelected(model.whichBox(portalX, portalY));
+                    currentState = portalDragging;
+                }
+                else {
+                    currentState = portalPanning;
+                }
 
             }
             else {
@@ -257,6 +259,10 @@ public class AppController {
             }
 
 
+        }
+
+        public void handleReleased(MouseEvent event) {
+            currentState = ready;
         }
 
         public void handleKeyReleased(KeyEvent event) {
@@ -276,7 +282,7 @@ public class AppController {
 
         public void handleReleased(MouseEvent event) {
             iModel.setSelected(null);
-            currentState = portalReady;
+            currentState = ready;
         }
 
         public void handleKeyReleased(KeyEvent event) {
@@ -306,6 +312,66 @@ public class AppController {
             currentState = portalReady;
         }
 
+        public void handleKeyReleased(KeyEvent event) {
+            currentState = ready;
+        }
+
+    };
+
+
+    ControllerState portalDragging = new ControllerState() {
+
+        public void handleDragged(MouseEvent event) {
+
+            dX = event.getX() - prevX;
+            dY = event.getY() - prevY;
+
+            prevX = event.getX();
+            prevY = event.getY();
+
+            model.moveBox(iModel.getSelected(), dX, dY);
+        }
+
+        public void handleReleased(MouseEvent event) {
+            currentState = portalReady;
+        }
+
+        public void handleKeyReleased(KeyEvent event) {
+            currentState = ready;
+        }
+
+    };
+
+
+    ControllerState portalPanning = new ControllerState() {
+
+        @Override
+        public void handlePressed(MouseEvent event) {
+            prevX = event.getX();
+            prevY = event.getY();
+        }
+
+        @Override
+        public void handleDragged(MouseEvent event) {
+
+            dX = (prevX - event.getX()) / ((Portal) iModel.getSelected()).getScale();
+            dY = (prevY - event.getY()) / ((Portal) iModel.getSelected()).getScale();
+
+            prevX = event.getX();
+            prevY = event.getY();
+
+            Portal portal = (Portal) iModel.getSelected();
+            portal.setPLeft(portal.getPLeft() - dX);
+            portal.setPTop(portal.getPTop() - dY);
+
+            model.notifySubscribers();
+        }
+
+        public void handleReleased(MouseEvent event) {
+            currentState = portalReady;
+        }
+
+        @Override
         public void handleKeyReleased(KeyEvent event) {
             currentState = ready;
         }

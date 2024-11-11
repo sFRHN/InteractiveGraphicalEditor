@@ -10,16 +10,6 @@ public class Portal extends Box {
         scale = 0.5;
     }
 
-    public void changePosition(double x, double y) {
-        super.changePosition(x, y);
-    }
-
-    public void move(double dX, double dY) {
-        super.move(dX, dY);
-        pLeft += dX;
-        pTop += dY;
-    }
-
     public double getScale() { return scale; }
     public double getPLeft() { return pLeft; }
     public double getPTop() { return pTop; }
