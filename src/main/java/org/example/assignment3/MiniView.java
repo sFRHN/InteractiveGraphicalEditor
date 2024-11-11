@@ -1,7 +1,9 @@
 package org.example.assignment3;
 
+import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 public class MiniView extends DetailView {
@@ -14,17 +16,17 @@ public class MiniView extends DetailView {
     public MiniView() {
         super();
         myCanvas = new Canvas(size, size);
-        this.setPrefSize(size, size);
         gc = myCanvas.getGraphicsContext2D();
-        this.setAlignment(javafx.geometry.Pos.TOP_LEFT);
-        this.setPrefSize(size, size);
+        this.setMinSize(size, size);
+        this.setMaxSize(size, size);
+        StackPane.setAlignment(this, Pos.TOP_LEFT);
         this.getChildren().add(myCanvas);
         opacityProperty().set(0.5);
     }
 
     @Override
     public void draw() {
-        double scale = size / iModel.getWorldSize();
+        double scale = this.size / iModel.getWorldSize();
 
         gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
 
@@ -42,15 +44,15 @@ public class MiniView extends DetailView {
         gc.strokeRect(
                 -iModel.getViewLeft(),
                 -iModel.getViewTop(),
-                ViewWidth(),
-                ViewHeight()
+                iModel.getViewWidth(),
+                iModel.getViewHeight()
         );
         gc.setFill(Color.YELLOW);
         gc.fillRect(
                 -iModel.getViewLeft(),
                 -iModel.getViewTop(),
-                ViewWidth(),
-                ViewHeight()
+                iModel.getViewWidth(),
+                iModel.getViewHeight()
         );
 
         model.getBoxes().forEach(entity -> {
@@ -66,6 +68,15 @@ public class MiniView extends DetailView {
         });
 
         gc.restore();
+    }
+
+    @Override
+    public void setupEvents(AppController controller) {
+        myCanvas.setOnMousePressed(controller::handlePressed);
+        myCanvas.setOnMouseDragged(controller::handleDragged);
+        myCanvas.setOnMouseReleased(controller::handleReleased);
+        setOnKeyPressed(controller::handleKeyPressed);
+        setOnKeyReleased(controller::handleKeyReleased);
     }
 
     public void modelChanged() {
