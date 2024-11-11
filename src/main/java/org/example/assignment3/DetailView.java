@@ -18,21 +18,19 @@ public class DetailView extends StackPane implements Subscriber{
         width = 800;
         height = 800;
         myCanvas = new Canvas(width, height);
-        this.setMinSize(width, height);
-        this.setMaxSize(width, height);
         gc = myCanvas.getGraphicsContext2D();
 
         this.widthProperty().addListener((observable, oldValue, newValue) -> {
             this.width = newValue.doubleValue();
-            myCanvas.setWidth(newValue.doubleValue());
-            iModel.setViewWidth(newValue.doubleValue());
+            myCanvas.setWidth(this.width);
+            iModel.setViewWidth(this.width);
             draw();
         });
 
         this.heightProperty().addListener((observable, oldValue, newValue) -> {
             this.height = newValue.doubleValue();
-            myCanvas.setHeight(newValue.doubleValue());
-            iModel.setViewHeight(newValue.doubleValue());
+            myCanvas.setHeight(this.height);
+            iModel.setViewHeight(this.height);
             draw();
         });
 

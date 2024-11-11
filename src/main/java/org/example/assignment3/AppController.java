@@ -50,7 +50,6 @@ public class AppController {
 
             else if (model.contains(adjustedX, adjustedY)) {
                 iModel.setSelected(model.whichBox(adjustedX, adjustedY));
-                model.notifySubscribers();
                 currentState = dragging;
             }
             else {
@@ -91,7 +90,6 @@ public class AppController {
         @Override
         public void handleReleased(MouseEvent event) {
             iModel.setSelected(null);
-            model.notifySubscribers();
             currentState = ready;
         }
 
