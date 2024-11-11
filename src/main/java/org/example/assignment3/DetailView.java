@@ -45,8 +45,8 @@ public class DetailView extends StackPane implements Subscriber{
         myCanvas.setOnMousePressed(controller::handlePressed);
         myCanvas.setOnMouseDragged(controller::handleDragged);
         myCanvas.setOnMouseReleased(controller::handleReleased);
-        myCanvas.setOnKeyPressed(controller::handleKeyPressed);
-        myCanvas.setOnKeyReleased(controller::handleKeyReleased);
+        setOnKeyPressed(controller::handleKeyPressed);
+        setOnKeyReleased(controller::handleKeyReleased);
     }
 
     public void draw() {

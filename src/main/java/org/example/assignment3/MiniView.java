@@ -97,8 +97,8 @@ public class MiniView extends DetailView {
             controller.setScale(scale);
             controller.handleReleased(e);
         });
-        myCanvas.setOnKeyPressed(controller::handleKeyPressed);
-        myCanvas.setOnKeyReleased(controller::handleKeyReleased);
+        setOnKeyPressed(controller::handleKeyPressed);
+        setOnKeyReleased(controller::handleKeyReleased);
     }
 
     public void modelChanged() {
