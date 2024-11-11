@@ -129,7 +129,6 @@ public class MiniView extends DetailView {
     private void drawHandles(Box entity) {
         gc.setFill(Color.WHITE);
         double circleRadius = iModel.getHandleRadius();
-        circleRadius *= 4;
         gc.strokeOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
         gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
         gc.strokeOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
