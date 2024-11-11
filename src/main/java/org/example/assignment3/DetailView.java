@@ -34,6 +34,7 @@ public class DetailView extends StackPane implements Subscriber{
             draw();
         });
 
+        this.setMinSize(0,0);
         this.getChildren().add(myCanvas);
     }
 
