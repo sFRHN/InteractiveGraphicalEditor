@@ -43,7 +43,7 @@ public class MiniController {
             prevX = event.getX();
             prevY = event.getY();
 
-            if (iModel.getSelected() != null && iModel.onHandle(prevX/scale, prevX/scale)) {
+            if (iModel.getSelected() != null && iModel.onHandle(prevX/scale, prevY/scale)) {
                 currentState = resizing;
             }
 

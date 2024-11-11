@@ -80,7 +80,7 @@ public class InteractionModel {
         else if (bottomRightHandle(mx, my)) {
             System.out.println("bottomRightHandle");
         }
-        return selected != null && (topLeftHandle(mx, my) || topRightHandle(mx, my) || bottomLeftHandle(mx, my) || bottomRightHandle(mx, my));
+        return (topLeftHandle(mx, my) || topRightHandle(mx, my) || bottomLeftHandle(mx, my) || bottomRightHandle(mx, my));
     }
 
     public String whichHandle(double mx, double my) {
