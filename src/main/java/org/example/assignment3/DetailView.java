@@ -12,6 +12,7 @@ public class DetailView extends StackPane implements Subscriber{
     protected EntityModel model;
     protected InteractionModel iModel;
     private final Canvas myCanvas;
+    private int MAX_DEPTH = 3;
 
     public DetailView() {
         width = 800;
@@ -52,7 +53,7 @@ public class DetailView extends StackPane implements Subscriber{
         model.getBoxes().forEach(entity -> {
 
             if (entity instanceof Portal portal) {
-                drawPortal(portal);
+                drawPortal(portal, 0);
             }
             else {
                 drawBox(entity);
@@ -80,19 +81,29 @@ public class DetailView extends StackPane implements Subscriber{
 
     }
 
-    private void drawPortal(Portal portal) {
+    private void drawPortal(Portal portal, double depth) {
+
+        if (depth > MAX_DEPTH) return;
 
         gc.save();
         gc.beginPath();
         gc.strokeRect(portal.getX(), portal.getY(), portal.getWidth(), portal.getHeight());
         gc.setFill(Color.WHITESMOKE);
         gc.fillRect(portal.getX(), portal.getY(), portal.getWidth(), portal.getHeight());
+
+        if (iModel.getSelected() == portal) {
+            drawHandles(portal);
+        }
+
         gc.rect(portal.getX(), portal.getY(), portal.getWidth(), portal.getHeight());
         gc.clip();
         gc.translate(portal.getPLeft(), portal.getPTop());
         gc.scale(portal.getScale(), portal.getScale());
         model.getBoxes().forEach(entity -> {
-            if (!(entity instanceof Portal)) {
+            if (entity instanceof Portal) {
+                drawPortal((Portal)entity, depth + 1);
+            }
+            else if (depth < MAX_DEPTH) {
                 drawBox(entity);
             }
         });
