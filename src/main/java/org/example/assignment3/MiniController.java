@@ -4,12 +4,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-public class AppController {
+public class MiniController {
 
     private EntityModel model;
     private InteractionModel iModel;
     private ControllerState currentState;
-    private double prevX, prevY, dX, dY, adjustedX, adjustedY;
+    private double prevX, prevY, dX, dY;
+    private double scale;
 
     public abstract static class ControllerState {
         void handlePressed(MouseEvent event) {}
@@ -19,12 +20,13 @@ public class AppController {
         void handleKeyReleased(KeyEvent event) {}
     }
 
-    public AppController() {
+    public MiniController() {
         currentState = ready;
     }
 
     public void setModel(EntityModel model) { this.model = model; }
     public void setiModel(InteractionModel iModel) { this.iModel = iModel; }
+    public void setScale(double scale) { this.scale = scale; }
 
     public void handlePressed(MouseEvent event) { currentState.handlePressed(event); }
     public void handleDragged(MouseEvent event) { currentState.handleDragged(event); }
@@ -41,15 +43,12 @@ public class AppController {
             prevX = event.getX();
             prevY = event.getY();
 
-            adjustedX = event.getX() + iModel.getViewLeft();
-            adjustedY = event.getY() + iModel.getViewTop();
-
-            if (iModel.getSelected() != null && iModel.onHandle(adjustedX, adjustedY)) {
+            if (iModel.getSelected() != null && iModel.onHandle(prevX/scale, prevX/scale)) {
                 currentState = resizing;
             }
 
-            else if (model.contains(adjustedX, adjustedY)) {
-                iModel.setSelected(model.whichBox(adjustedX, adjustedY));
+            else if (model.contains(prevX/scale, prevY/scale)) {
+                iModel.setSelected(model.whichBox(prevX/scale, prevY/scale));
                 currentState = dragging;
             }
             else {
@@ -82,8 +81,8 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-            model.addBox(adjustedX, adjustedY, 1,1);
-            iModel.setSelected(model.whichBox(adjustedX, adjustedY));
+            model.addBox(prevX/scale, prevY/scale, 1/scale,1/scale);
+            iModel.setSelected(model.whichBox(prevX/scale, prevY/scale));
             currentState = creating;
         }
 
@@ -100,14 +99,14 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-            double newX = Math.min(event.getX() + iModel.getViewLeft(), prevX + iModel.getViewLeft());
-            double newY = Math.min(event.getY() + iModel.getViewTop(), prevY + iModel.getViewTop());
+            double newX = Math.min(event.getX()/scale, prevX/scale);
+            double newY = Math.min(event.getY()/scale, prevY/scale);
             double newWidth = Math.abs(event.getX() - prevX);
             double newHeight = Math.abs(event.getY() - prevY);
 
             iModel.getSelected().changePosition(newX, newY);
-            iModel.getSelected().setWidth(newWidth);
-            iModel.getSelected().setHeight(newHeight);
+            iModel.getSelected().setWidth(newWidth/scale);
+            iModel.getSelected().setHeight(newHeight/scale);
 
             model.notifySubscribers();
         }
@@ -130,7 +129,7 @@ public class AppController {
             prevX = event.getX();
             prevY = event.getY();
 
-            model.moveBox(iModel.getSelected(), dX, dY);
+            model.moveBox(iModel.getSelected(), dX/scale, dY/scale);
         }
 
         public void handleReleased(MouseEvent event) {
@@ -162,7 +161,7 @@ public class AppController {
 
         @Override
         public void handleKeyReleased(KeyEvent event) {
-                currentState = ready;
+            currentState = ready;
         }
 
     };
@@ -172,12 +171,12 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-            double newX = event.getX() + iModel.getViewLeft();
-            double newY = event.getY() + iModel.getViewTop();
-            double dX = newX - adjustedX;
-            double dY = newY - adjustedY;
+            double newX = event.getX();
+            double newY = event.getY();
+            double dX = (newX - prevX)/scale;
+            double dY = (newY - prevY)/scale;
 
-            String handle = iModel.whichHandle(adjustedX, adjustedY);
+            String handle = iModel.whichHandle(prevX/scale, prevY/scale);
             switch (handle) {
                 case "topLeftHandle":
                     iModel.getSelected().changePosition(iModel.getSelected().getX() + dX, iModel.getSelected().getY() + dY);
@@ -202,8 +201,8 @@ public class AppController {
                     break;
             }
 
-            adjustedX = newX;
-            adjustedY = newY;
+            prevX = newX;
+            prevY = newY;
             model.notifySubscribers();
         }
 
