@@ -51,8 +51,7 @@ public class DetailView extends StackPane implements Subscriber{
         gc.translate(-iModel.getViewLeft(), -iModel.getViewTop());
         model.getBoxes().forEach(entity -> {
 
-            if (entity instanceof Portal) {
-                Portal portal = (Portal) entity;
+            if (entity instanceof Portal portal) {
                 drawPortal(portal);
             }
             else {
