@@ -47,7 +47,6 @@ public class AppController {
             if (iModel.getSelected() != null && iModel.onHandle(adjustedX, adjustedY)) {
                 currentState = resizing;
             }
-
             else if (model.contains(adjustedX, adjustedY)) {
                 iModel.setSelected(model.whichBox(adjustedX, adjustedY));
                 currentState = dragging;
@@ -82,9 +81,15 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-            model.addBox(adjustedX, adjustedY, 1,1);
+
+            if (event.isControlDown()) {
+                model.addPortal(adjustedX, adjustedY, 1, 1);
+            } else {
+                model.addBox(adjustedX, adjustedY, 1, 1);
+            }
             iModel.setSelected(model.whichBox(adjustedX, adjustedY));
             currentState = creating;
+
         }
 
         @Override
