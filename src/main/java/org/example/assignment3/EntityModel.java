@@ -21,6 +21,16 @@ public class EntityModel {
         notifySubscribers();
     }
 
+    public void addPortal(double x, double y, double width, double height) {
+        boxes.add(new Portal(x, y, width, height));
+        notifySubscribers();
+    }
+
+    public void deletePortal(Portal p) {
+        boxes.remove(p);
+        notifySubscribers();
+    }
+
     public void deleteBox(Box b) {
         boxes.remove(b);
         notifySubscribers();
