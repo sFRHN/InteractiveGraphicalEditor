@@ -57,9 +57,6 @@ public class DetailView extends StackPane implements Subscriber{
             else {
                 drawBox(entity);
             }
-            if (iModel.getSelected() == entity) {
-                drawHandles(entity);
-            }
 
         });
         gc.restore();
@@ -75,6 +72,11 @@ public class DetailView extends StackPane implements Subscriber{
         }
         gc.fillRect(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
         gc.strokeRect(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
+
+        if (iModel.getSelected() == entity) {
+            drawHandles(entity);
+        }
+
 
     }
 
