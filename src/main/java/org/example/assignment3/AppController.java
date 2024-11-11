@@ -23,33 +23,16 @@ public class AppController {
         currentState = ready;
     }
 
-    public void setModel(EntityModel model) {
-        this.model = model;
-    }
+    public void setModel(EntityModel model) { this.model = model; }
+    public void setiModel(InteractionModel iModel) { this.iModel = iModel; }
 
-    public void setiModel(InteractionModel iModel) {
-        this.iModel = iModel;
-    }
+    public void handlePressed(MouseEvent event) { currentState.handlePressed(event); }
+    public void handleDragged(MouseEvent event) { currentState.handleDragged(event); }
+    public void handleReleased(MouseEvent event) { currentState.handleReleased(event); }
+    public void handleKeyPressed(KeyEvent event) { currentState.handleKeyPressed(event); }
+    public void handleKeyReleased(KeyEvent event) { currentState.handleKeyReleased(event); }
 
-    public void handlePressed(MouseEvent event) {
-        currentState.handlePressed(event);
-    }
 
-    public void handleDragged(MouseEvent event) {
-        currentState.handleDragged(event);
-    }
-
-    public void handleReleased(MouseEvent event) {
-        currentState.handleReleased(event);
-    }
-
-    public void handleKeyPressed(KeyEvent event) {
-        currentState.handleKeyPressed(event);
-    }
-
-    public void handleKeyReleased(KeyEvent event) {
-        currentState.handleKeyReleased(event);
-    }
 
     ControllerState ready = new ControllerState() {
 
@@ -95,6 +78,7 @@ public class AppController {
 
     };
 
+
     ControllerState preparing = new ControllerState() {
 
         @Override
@@ -112,6 +96,7 @@ public class AppController {
         }
 
     };
+
 
     ControllerState creating = new ControllerState() {
 
@@ -136,6 +121,7 @@ public class AppController {
 
     };
 
+
     ControllerState dragging = new ControllerState() {
 
         public void handleDragged(MouseEvent event) {
@@ -151,6 +137,7 @@ public class AppController {
         }
 
     };
+
 
     ControllerState panning = new ControllerState() {
 
@@ -178,6 +165,7 @@ public class AppController {
 
     };
 
+
     ControllerState resizing = new ControllerState() {
 
         @Override
@@ -187,7 +175,8 @@ public class AppController {
             double dX = newX - adjustedX;
             double dY = newY - adjustedY;
 
-            switch (iModel.whichHandle(adjustedX, adjustedY)) {
+            String handle = iModel.whichHandle(adjustedX, adjustedY);
+            switch (handle) {
                 case "topLeftHandle":
                     iModel.getSelected().changePosition(iModel.getSelected().getX() + dX, iModel.getSelected().getY() + dY);
                     iModel.getSelected().setWidth(iModel.getSelected().getWidth() - dX);
@@ -223,7 +212,5 @@ public class AppController {
 
 
     };
-
-
 
 }
