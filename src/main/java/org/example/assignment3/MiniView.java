@@ -48,7 +48,7 @@ public class MiniView extends DetailView {
         gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
 
         gc.save();
-        gc.setFill(Color.LIGHTGRAY);
+        gc.setFill(Color.WHITESMOKE);
         gc.fillRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
         gc.strokeRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
 
@@ -110,6 +110,8 @@ public class MiniView extends DetailView {
         gc.save();
         gc.beginPath();
         gc.strokeRect(portal.getX(), portal.getY(), portal.getWidth(), portal.getHeight());
+        gc.setFill(Color.LIGHTGRAY);
+        gc.fillRect(portal.getX(), portal.getY(), portal.getWidth(), portal.getHeight());
         gc.rect(portal.getX(), portal.getY(), portal.getWidth(), portal.getHeight());
         gc.clip();
         gc.translate(portal.getPLeft(), portal.getPTop());

@@ -83,6 +83,8 @@ public class DetailView extends StackPane implements Subscriber{
         gc.save();
         gc.beginPath();
         gc.strokeRect(portal.getX(), portal.getY(), portal.getWidth(), portal.getHeight());
+        gc.setFill(Color.WHITESMOKE);
+        gc.fillRect(portal.getX(), portal.getY(), portal.getWidth(), portal.getHeight());
         gc.rect(portal.getX(), portal.getY(), portal.getWidth(), portal.getHeight());
         gc.clip();
         gc.translate(portal.getPLeft(), portal.getPTop());
