@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 
 public class DetailView extends StackPane implements Subscriber{
 
-    private double width, height;
+    private double width = 800, height = 800;
     private final GraphicsContext gc;
     protected EntityModel model;
     protected InteractionModel iModel;
@@ -18,18 +18,20 @@ public class DetailView extends StackPane implements Subscriber{
         width = 800;
         height = 800;
         myCanvas = new Canvas(width, height);
+        this.setMinSize(width, height);
+        this.setMaxSize(width, height);
         gc = myCanvas.getGraphicsContext2D();
 
         this.widthProperty().addListener((observable, oldValue, newValue) -> {
-           myCanvas.setWidth(newValue.doubleValue());
-           this.width = newValue.doubleValue();
-           iModel.setViewWidth(newValue.doubleValue());
-           draw();
+            this.width = newValue.doubleValue();
+            myCanvas.setWidth(newValue.doubleValue());
+            iModel.setViewWidth(newValue.doubleValue());
+            draw();
         });
 
         this.heightProperty().addListener((observable, oldValue, newValue) -> {
-            myCanvas.setHeight(newValue.doubleValue());
             this.height = newValue.doubleValue();
+            myCanvas.setHeight(newValue.doubleValue());
             iModel.setViewHeight(newValue.doubleValue());
             draw();
         });
@@ -37,13 +39,8 @@ public class DetailView extends StackPane implements Subscriber{
         this.getChildren().add(myCanvas);
     }
 
-    public void setModel(EntityModel m) {
-        this.model = m;
-    }
-
-    public void setiModel(InteractionModel im) {
-        this.iModel = im;
-    }
+    public void setModel(EntityModel m) { this.model = m; }
+    public void setiModel(InteractionModel im) { this.iModel = im; }
 
     public void setupEvents(AppController controller) {
         setOnMousePressed(controller::handlePressed);
@@ -83,9 +80,7 @@ public class DetailView extends StackPane implements Subscriber{
         gc.restore();
     }
 
-    public double ViewWidth() {
-        return width;
-    }
+    public double ViewWidth() { return width; }
 
     public double ViewHeight() {
         return height;
