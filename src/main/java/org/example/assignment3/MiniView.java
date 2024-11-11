@@ -24,6 +24,23 @@ public class MiniView extends DetailView {
         opacityProperty().set(0.5);
     }
 
+    public void setupEvents(MiniController controller) {
+        myCanvas.setOnMousePressed(e -> {
+            controller.setScale(scale);
+            controller.handlePressed(e);
+        });
+        myCanvas.setOnMouseDragged(e-> {
+            controller.setScale(scale);
+            controller.handleDragged(e);
+        });
+        myCanvas.setOnMouseReleased(e -> {
+            controller.setScale(scale);
+            controller.handleReleased(e);
+        });
+        setOnKeyPressed(controller::handleKeyPressed);
+        setOnKeyReleased(controller::handleKeyReleased);
+    }
+
     @Override
     public void draw() {
         scale = this.size / iModel.getWorldSize();
@@ -56,27 +73,16 @@ public class MiniView extends DetailView {
         );
 
         model.getBoxes().forEach(entity -> {
-            if (iModel.getSelected() == entity) {
-                gc.setFill(Color.ORANGE);
-            } else {
-                gc.setFill(Color.BLUE);
+
+            if (entity instanceof Portal portal) {
+                drawPortal(portal);
             }
-            gc.fillRect(entity.getX(), entity.getY(),
-                    entity.getWidth(), entity.getHeight());
-            gc.strokeRect(entity.getX(), entity.getY(),
-                    entity.getWidth(), entity.getHeight());
+            else {
+                drawBox(entity);
+            }
 
             if (iModel.getSelected() == entity) {
-                gc.setFill(Color.WHITE);
-                double circleRadius = iModel.getHandleRadius();
-                gc.strokeOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
-                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
-                gc.strokeOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
-                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
-                gc.fillOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
-                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
-                gc.fillOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
-                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                drawHandles(entity);
             }
 
         });
@@ -84,22 +90,55 @@ public class MiniView extends DetailView {
         gc.restore();
     }
 
-    public void setupEvents(MiniController controller) {
-        myCanvas.setOnMousePressed(e -> {
-            controller.setScale(scale);
-            controller.handlePressed(e);
-        });
-        myCanvas.setOnMouseDragged(e-> {
-            controller.setScale(scale);
-            controller.handleDragged(e);
-        });
-        myCanvas.setOnMouseReleased(e -> {
-            controller.setScale(scale);
-            controller.handleReleased(e);
-        });
-        setOnKeyPressed(controller::handleKeyPressed);
-        setOnKeyReleased(controller::handleKeyReleased);
+
+    private void drawBox(Box entity) {
+
+        if (iModel.getSelected() == entity) {
+            gc.setFill(Color.ORANGE);
+        } else {
+            gc.setFill(Color.BLUE);
+        }
+        gc.fillRect(entity.getX(), entity.getY(),
+                entity.getWidth(), entity.getHeight());
+        gc.strokeRect(entity.getX(), entity.getY(),
+                entity.getWidth(), entity.getHeight());
+
     }
+
+    private void drawPortal(Portal portal) {
+
+        gc.save();
+        gc.beginPath();
+        gc.strokeRect(portal.getX(), portal.getY(), portal.getWidth(), portal.getHeight());
+        gc.rect(portal.getX(), portal.getY(), portal.getWidth(), portal.getHeight());
+        gc.clip();
+        gc.translate(portal.getPLeft(), portal.getPTop());
+        gc.scale(portal.getScale(), portal.getScale());
+        model.getBoxes().forEach(entity -> {
+            if (!(entity instanceof Portal)) {
+                drawBox(entity);
+            }
+        });
+        gc.restore();
+
+    }
+
+
+    private void drawHandles(Box entity) {
+        gc.setFill(Color.WHITE);
+        double circleRadius = iModel.getHandleRadius();
+        gc.strokeOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+        gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+        gc.strokeOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+        gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+        gc.fillOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+        gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+        gc.fillOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+        gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+
+    }
+
+
 
     public void modelChanged() {
         draw();
