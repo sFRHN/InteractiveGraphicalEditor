@@ -11,7 +11,7 @@ public class MiniView extends DetailView {
     private double size = 200;
     private final GraphicsContext gc;
     private final Canvas myCanvas;
-
+    private double scale;
 
     public MiniView() {
         super();
@@ -26,7 +26,7 @@ public class MiniView extends DetailView {
 
     @Override
     public void draw() {
-        double scale = this.size / iModel.getWorldSize();
+        scale = this.size / iModel.getWorldSize();
 
         gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
 
@@ -69,14 +69,14 @@ public class MiniView extends DetailView {
             if (iModel.getSelected() == entity) {
                 gc.setFill(Color.WHITE);
                 double circleRadius = iModel.getHandleRadius();
-                gc.strokeOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 10, 10);
-                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 10, 10);
-                gc.strokeOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
-                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
-                gc.fillOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 10, 10);
-                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 10, 10);
-                gc.fillOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
-                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
+                gc.strokeOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.strokeOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.fillOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.fillOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
             }
 
         });
@@ -84,13 +84,21 @@ public class MiniView extends DetailView {
         gc.restore();
     }
 
-    @Override
-    public void setupEvents(AppController controller) {
-        myCanvas.setOnMousePressed(controller::handlePressed);
-        myCanvas.setOnMouseDragged(controller::handleDragged);
-        myCanvas.setOnMouseReleased(controller::handleReleased);
-        setOnKeyPressed(controller::handleKeyPressed);
-        setOnKeyReleased(controller::handleKeyReleased);
+    public void setupEvents(MiniController controller) {
+        myCanvas.setOnMousePressed(e -> {
+            controller.setScale(scale);
+            controller.handlePressed(e);
+        });
+        myCanvas.setOnMouseDragged(e-> {
+            controller.setScale(scale);
+            controller.handleDragged(e);
+        });
+        myCanvas.setOnMouseReleased(e -> {
+            controller.setScale(scale);
+            controller.handleReleased(e);
+        });
+        myCanvas.setOnKeyPressed(controller::handleKeyPressed);
+        myCanvas.setOnKeyReleased(controller::handleKeyReleased);
     }
 
     public void modelChanged() {

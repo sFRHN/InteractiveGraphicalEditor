@@ -42,11 +42,11 @@ public class DetailView extends StackPane implements Subscriber{
     public void setiModel(InteractionModel im) { this.iModel = im; }
 
     public void setupEvents(AppController controller) {
-        setOnMousePressed(controller::handlePressed);
-        setOnMouseDragged(controller::handleDragged);
-        setOnMouseReleased(controller::handleReleased);
-        setOnKeyPressed(controller::handleKeyPressed);
-        setOnKeyReleased(controller::handleKeyReleased);
+        myCanvas.setOnMousePressed(controller::handlePressed);
+        myCanvas.setOnMouseDragged(controller::handleDragged);
+        myCanvas.setOnMouseReleased(controller::handleReleased);
+        myCanvas.setOnKeyPressed(controller::handleKeyPressed);
+        myCanvas.setOnKeyReleased(controller::handleKeyReleased);
     }
 
     public void draw() {
@@ -66,14 +66,14 @@ public class DetailView extends StackPane implements Subscriber{
             if (iModel.getSelected() == entity) {
                 gc.setFill(Color.WHITE);
                 double circleRadius = iModel.getHandleRadius();
-                gc.strokeOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 10, 10);
-                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 10, 10);
-                gc.strokeOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
-                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
-                gc.fillOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 10, 10);
-                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 10, 10);
-                gc.fillOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
-                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
+                gc.strokeOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.strokeOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.fillOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.fillOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
+                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 2 * circleRadius, 2 * circleRadius);
             }
         });
         gc.restore();
