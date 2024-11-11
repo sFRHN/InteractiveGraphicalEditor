@@ -20,6 +20,8 @@ public class InteractionModel {
     public int getWorldSize() { return this.worldSize; }
     public double getViewLeft() { return this.viewLeft; }
     public double getViewTop() { return this.viewTop; }
+    public double getViewWidth() { return this.viewWidth; }
+    public double getViewHeight() { return this.viewHeight; }
     public double getHandleRadius() { return handleRadius; }
     public void setViewWidth(double w) { this.viewWidth = w; }
     public void setViewHeight(double h) { this.viewHeight = h; }
