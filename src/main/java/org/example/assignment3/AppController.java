@@ -44,8 +44,6 @@ public class AppController {
             adjustedX = event.getX() + iModel.getViewLeft();
             adjustedY = event.getY() + iModel.getViewTop();
 
-            System.out.println("READY - View to World " + adjustedX + " " + adjustedY);
-
             if (iModel.getSelected() != null && iModel.onHandle(adjustedX, adjustedY)) {
                 currentState = resizing;
             }
