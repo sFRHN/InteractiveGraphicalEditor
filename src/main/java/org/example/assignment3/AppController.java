@@ -44,6 +44,8 @@ public class AppController {
             adjustedX = event.getX() + iModel.getViewLeft();
             adjustedY = event.getY() + iModel.getViewTop();
 
+            System.out.println("READY - View to World " + adjustedX + " " + adjustedY);
+
             if (iModel.getSelected() != null && iModel.onHandle(adjustedX, adjustedY)) {
                 currentState = resizing;
             }
@@ -69,6 +71,9 @@ public class AppController {
                 case SHIFT:
                     currentState = panning;
                     break;
+                case CONTROL:
+                    currentState = portalReady;
+                    break;
                 default:
                     break;
             }
@@ -81,12 +86,7 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-
-            if (event.isControlDown()) {
-                model.addPortal(adjustedX, adjustedY, 1, 1);
-            } else {
-                model.addBox(adjustedX, adjustedY, 1, 1);
-            }
+            model.addBox(adjustedX, adjustedY, 1, 1);
             iModel.setSelected(model.whichBox(adjustedX, adjustedY));
             currentState = creating;
 
@@ -167,7 +167,7 @@ public class AppController {
 
         @Override
         public void handleKeyReleased(KeyEvent event) {
-                currentState = ready;
+            currentState = ready;
         }
 
     };
@@ -217,6 +217,98 @@ public class AppController {
             currentState = ready;
         }
 
+
+    };
+
+
+    ControllerState portalReady = new ControllerState() {
+
+        public void handlePressed(MouseEvent event) {
+
+            prevX = event.getX();
+            prevY = event.getY();
+
+            adjustedX = event.getX() + iModel.getViewLeft();
+            adjustedY = event.getY() + iModel.getViewTop();
+
+            System.out.println("PREADY - View to World " + adjustedX + ", " + adjustedY);
+
+
+            // If clicked on a portal
+            if (model.whichBox(adjustedX, adjustedY) instanceof Portal portal) {
+
+                // Find point inside the portal
+                double portalX = adjustedX - portal.getX();
+                double portalY = adjustedY - portal.getY();
+
+                System.out.println("Click inside portal at " + portalX + ", " + portalY);
+
+                // Convert to world coordinates
+                portalX /= portal.getScale();
+                portalY /= portal.getScale();
+                portalX += portal.getPLeft();
+                portalY += portal.getPTop();
+
+                System.out.println("Portal to World " + portalX + " " + portalY);
+
+            }
+            else {
+                currentState = portalPrep;
+            }
+
+
+        }
+
+        public void handleKeyReleased(KeyEvent event) {
+            currentState = ready;
+        }
+
+    };
+
+
+    ControllerState portalPrep = new ControllerState() {
+
+        public void handleDragged(MouseEvent event) {
+            model.addPortal(adjustedX, adjustedY, 1, 1);
+            iModel.setSelected(model.whichBox(adjustedX, adjustedY));
+            currentState = portalCreating;
+        }
+
+        public void handleReleased(MouseEvent event) {
+            iModel.setSelected(null);
+            currentState = portalReady;
+        }
+
+        public void handleKeyReleased(KeyEvent event) {
+            currentState = ready;
+        }
+
+    };
+
+
+    ControllerState portalCreating = new ControllerState() {
+
+        public void handleDragged(MouseEvent event) {
+
+            double newX = Math.min(event.getX() + iModel.getViewLeft(), prevX + iModel.getViewLeft());
+            double newY = Math.min(event.getY() + iModel.getViewTop(), prevY + iModel.getViewTop());
+            double newWidth = Math.abs(event.getX() - prevX);
+            double newHeight = Math.abs(event.getY() - prevY);
+
+            iModel.getSelected().changePosition(newX, newY);
+            iModel.getSelected().setWidth(newWidth);
+            iModel.getSelected().setHeight(newHeight);
+
+            model.notifySubscribers();
+        }
+
+        public void handleReleased(MouseEvent event) {
+            currentState = portalReady;
+        }
+
+        public void handleKeyReleased(KeyEvent event) {
+            currentState = ready;
+        }
 
     };
 

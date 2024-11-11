@@ -97,7 +97,7 @@ public class DetailView extends StackPane implements Subscriber{
 
         gc.rect(portal.getX(), portal.getY(), portal.getWidth(), portal.getHeight());
         gc.clip();
-        gc.translate(portal.getPLeft(), portal.getPTop());
+        gc.translate(portal.getX(), portal.getY());
         gc.scale(portal.getScale(), portal.getScale());
         model.getBoxes().forEach(entity -> {
             if (entity instanceof Portal) {

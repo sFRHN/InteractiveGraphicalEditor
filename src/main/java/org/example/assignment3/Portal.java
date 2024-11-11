@@ -12,8 +12,6 @@ public class Portal extends Box {
 
     public void changePosition(double x, double y) {
         super.changePosition(x, y);
-        pLeft = x;
-        pTop = y;
     }
 
     public void move(double dX, double dY) {
