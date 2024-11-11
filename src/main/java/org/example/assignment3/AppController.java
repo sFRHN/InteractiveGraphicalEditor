@@ -41,8 +41,8 @@ public class AppController {
             prevX = event.getX();
             prevY = event.getY();
 
-            adjustedX = event.getX() - iModel.getViewLeft();
-            adjustedY = event.getY() - iModel.getViewTop();
+            adjustedX = event.getX() + iModel.getViewLeft();
+            adjustedY = event.getY() + iModel.getViewTop();
 
             if (iModel.getSelected() != null && iModel.onHandle(adjustedX, adjustedY)) {
                 currentState = resizing;
@@ -102,8 +102,8 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-            double newX = Math.min(event.getX() - iModel.getViewLeft(), prevX - iModel.getViewLeft());
-            double newY = Math.min(event.getY() - iModel.getViewTop(), prevY - iModel.getViewTop());
+            double newX = Math.min(event.getX() + iModel.getViewLeft(), prevX + iModel.getViewLeft());
+            double newY = Math.min(event.getY() + iModel.getViewTop(), prevY + iModel.getViewTop());
             double newWidth = Math.abs(event.getX() - prevX);
             double newHeight = Math.abs(event.getY() - prevY);
 
@@ -125,10 +125,13 @@ public class AppController {
     ControllerState dragging = new ControllerState() {
 
         public void handleDragged(MouseEvent event) {
+
             dX = event.getX() - prevX;
             dY = event.getY() - prevY;
+
             prevX = event.getX();
             prevY = event.getY();
+
             model.moveBox(iModel.getSelected(), dX, dY);
         }
 
@@ -149,18 +152,19 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-            dX = event.getX() - prevX;
-            dY = event.getY() - prevY;
+
+            dX = prevX - event.getX();
+            dY = prevY - event.getY();
+
             prevX = event.getX();
             prevY = event.getY();
+
             iModel.moveViewport(dX, dY);
         }
 
         @Override
         public void handleKeyReleased(KeyEvent event) {
-            if (event.getCode() == KeyCode.SHIFT) {
                 currentState = ready;
-            }
         }
 
     };
@@ -170,8 +174,8 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-            double newX = event.getX() - iModel.getViewLeft();
-            double newY = event.getY() - iModel.getViewTop();
+            double newX = event.getX() + iModel.getViewLeft();
+            double newY = event.getY() + iModel.getViewTop();
             double dX = newX - adjustedX;
             double dY = newY - adjustedY;
 

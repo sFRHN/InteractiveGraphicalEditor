@@ -53,7 +53,7 @@ public class DetailView extends StackPane implements Subscriber{
     public void draw() {
         gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
         gc.save();
-        gc.translate(iModel.getViewLeft(), iModel.getViewTop());
+        gc.translate(-iModel.getViewLeft(), -iModel.getViewTop());
         model.getBoxes().forEach(entity -> {
             if (iModel.getSelected() == entity) {
                 gc.setFill(Color.ORANGE);

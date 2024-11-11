@@ -42,15 +42,15 @@ public class MiniView extends DetailView {
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1.0 / scale);
         gc.strokeRect(
-                -iModel.getViewLeft(),
-                -iModel.getViewTop(),
+                iModel.getViewLeft(),
+                iModel.getViewTop(),
                 iModel.getViewWidth(),
                 iModel.getViewHeight()
         );
         gc.setFill(Color.YELLOW);
         gc.fillRect(
-                -iModel.getViewLeft(),
-                -iModel.getViewTop(),
+                iModel.getViewLeft(),
+                iModel.getViewTop(),
                 iModel.getViewWidth(),
                 iModel.getViewHeight()
         );
@@ -65,6 +65,20 @@ public class MiniView extends DetailView {
                     entity.getWidth(), entity.getHeight());
             gc.strokeRect(entity.getX(), entity.getY(),
                     entity.getWidth(), entity.getHeight());
+
+            if (iModel.getSelected() == entity) {
+                gc.setFill(Color.WHITE);
+                double circleRadius = iModel.getHandleRadius();
+                gc.strokeOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 10, 10);
+                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 10, 10);
+                gc.strokeOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
+                gc.strokeOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
+                gc.fillOval(entity.getX() - circleRadius, entity.getY() - circleRadius, 10, 10);
+                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() - circleRadius, 10, 10);
+                gc.fillOval(entity.getX() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
+                gc.fillOval(entity.getX() + entity.getWidth() - circleRadius, entity.getY() + entity.getHeight() - circleRadius, 10, 10);
+            }
+
         });
 
         gc.restore();

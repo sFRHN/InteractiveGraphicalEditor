@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class InteractionModel {
 
     private Box selected;
-    private ArrayList<Subscriber> subs;
+    private final ArrayList<Subscriber> subs;
     private final int worldSize = 2000;
     private double viewLeft = 0;
     private double viewTop = 0;
@@ -33,28 +33,28 @@ public class InteractionModel {
 
     public void moveViewport(double dX, double dY) {
 
-        double newViewLeft = viewLeft + dX;
-        if (newViewLeft > 0) {
-            viewLeft = 0;
-        }
-        else if (newViewLeft < -(worldSize - viewWidth)) {
-            viewLeft = -(worldSize - viewWidth);
-        }
-        else {
+        double newViewLeft, newViewTop;
+
+        newViewLeft = viewLeft + dX;
+        if (newViewLeft + viewWidth > worldSize) {
+            newViewLeft = worldSize - viewWidth;
             viewLeft = newViewLeft;
         }
+        else if (newViewLeft < 0) {
+            viewLeft = 0;
+        }
 
-        double newViewTop = viewTop + dY;
-        if (newViewTop > 0) {
-            viewTop = 0;
-        }
-        else if (newViewTop < -(worldSize - viewHeight)) {
-            viewTop = -(worldSize - viewHeight);
-        }
-        else {
+        newViewTop = viewTop + dY;
+        if (newViewTop + viewHeight > worldSize) {
+            newViewTop = worldSize - viewHeight;
             viewTop = newViewTop;
         }
+        else if (newViewTop < 0) {
+            viewTop = 0;
+        }
 
+        viewLeft += dX;
+        viewTop += dY;
         notifySubscribers();
     }
 
