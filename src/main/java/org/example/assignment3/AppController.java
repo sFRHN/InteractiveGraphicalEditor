@@ -44,7 +44,25 @@ public class AppController {
             adjustedX = event.getX() + iModel.getViewLeft();
             adjustedY = event.getY() + iModel.getViewTop();
 
-            if (iModel.getSelected() != null && iModel.onHandle(adjustedX, adjustedY)) {
+
+            // Check if control is pressed and pressing on a portal
+            if (event.isControlDown() && model.whichBox(prevX, prevY) instanceof Portal portal) {
+                portalX = adjustedX - portal.getX() - portal.getPLeft();
+                portalY = adjustedY - portal.getY() - portal.getPTop();
+
+                portalX /= portal.getScale();
+                portalY /= portal.getScale();
+
+                if (model.contains(portalX, portalY)) {
+                    iModel.setSelected(model.whichBox(portalX, portalY));
+                    currentState = dragging;
+                }
+                else {
+                    iModel.setSelected(portal);
+                    currentState = panning;
+                }
+            }
+            else if (iModel.getSelected() != null && iModel.onHandle(adjustedX, adjustedY)) {
                 currentState = resizing;
             }
             else if (model.contains(adjustedX, adjustedY)) {
@@ -69,9 +87,6 @@ public class AppController {
                 case SHIFT:
                     currentState = panning;
                     break;
-                case CONTROL:
-                    currentState = portalReady;
-                    break;
                 default:
                     break;
             }
@@ -84,7 +99,12 @@ public class AppController {
 
         @Override
         public void handleDragged(MouseEvent event) {
-            model.addBox(adjustedX, adjustedY, 1, 1);
+            if (event.isControlDown()) {
+                model.addPortal(adjustedX, adjustedY, 1, 1);
+            }
+            else {
+                model.addBox(adjustedX, adjustedY, 1, 1);
+            }
             iModel.setSelected(model.whichBox(adjustedX, adjustedY));
             currentState = creating;
 
@@ -160,7 +180,23 @@ public class AppController {
             prevX = event.getX();
             prevY = event.getY();
 
-            iModel.moveViewport(dX, dY);
+            if (event.isControlDown() && iModel.getSelected() instanceof Portal portal) {
+
+                dX *= portal.getScale();
+                dY *= portal.getScale();
+
+                portal.setPLeft(portal.getPLeft() - dX);
+                portal.setPTop(portal.getPTop() - dY);
+                model.notifySubscribers();
+            }
+            else {
+                iModel.moveViewport(dX, dY);
+            }
+        }
+
+        @Override
+        public void handleReleased(MouseEvent event) {
+            currentState = ready;
         }
 
         @Override
@@ -215,167 +251,6 @@ public class AppController {
             currentState = ready;
         }
 
-
-    };
-
-
-    ControllerState portalReady = new ControllerState() {
-
-        public void handlePressed(MouseEvent event) {
-
-            prevX = event.getX();
-            prevY = event.getY();
-
-            adjustedX = event.getX() + iModel.getViewLeft();
-            adjustedY = event.getY() + iModel.getViewTop();
-
-
-            // If clicked on a portal
-            if (model.whichBox(adjustedX, adjustedY) instanceof Portal portal) {
-
-                // Find point inside the portal
-                portalX = adjustedX - portal.getX() - portal.getPLeft();
-                portalY = adjustedY - portal.getY() - portal.getPTop();
-
-                // Convert to world coordinates
-                portalX /= portal.getScale();
-                portalY /= portal.getScale();
-
-                iModel.setSelected(model.whichBox(adjustedX, adjustedY));
-
-                if (model.contains(portalX, portalY)){
-                    iModel.setSelected(model.whichBox(portalX, portalY));
-                    currentState = portalDragging;
-                }
-                else {
-                    currentState = portalPanning;
-                }
-
-            }
-            else if (model.whichBox(adjustedX, adjustedY) != null) {
-                currentState = ready;
-            }
-            else {
-                currentState = portalPrep;
-            }
-
-
-        }
-
-        public void handleReleased(MouseEvent event) {
-            currentState = ready;
-        }
-
-        public void handleKeyReleased(KeyEvent event) {
-            currentState = ready;
-        }
-
-    };
-
-
-    ControllerState portalPrep = new ControllerState() {
-
-        public void handleDragged(MouseEvent event) {
-            model.addPortal(adjustedX, adjustedY, 1, 1);
-            iModel.setSelected(model.whichBox(adjustedX, adjustedY));
-            currentState = portalCreating;
-        }
-
-        public void handleReleased(MouseEvent event) {
-            iModel.setSelected(null);
-            currentState = ready;
-        }
-
-        public void handleKeyReleased(KeyEvent event) {
-            currentState = ready;
-        }
-
-    };
-
-
-    ControllerState portalCreating = new ControllerState() {
-
-        public void handleDragged(MouseEvent event) {
-
-            double newX = Math.min(event.getX() + iModel.getViewLeft(), prevX + iModel.getViewLeft());
-            double newY = Math.min(event.getY() + iModel.getViewTop(), prevY + iModel.getViewTop());
-            double newWidth = Math.abs(event.getX() - prevX);
-            double newHeight = Math.abs(event.getY() - prevY);
-
-            iModel.getSelected().changePosition(newX, newY);
-            iModel.getSelected().setWidth(newWidth);
-            iModel.getSelected().setHeight(newHeight);
-
-            model.notifySubscribers();
-        }
-
-        public void handleReleased(MouseEvent event) {
-            currentState = portalReady;
-        }
-
-        public void handleKeyReleased(KeyEvent event) {
-            currentState = ready;
-        }
-
-    };
-
-
-    ControllerState portalDragging = new ControllerState() {
-
-        public void handleDragged(MouseEvent event) {
-
-            dX = event.getX() - prevX;
-            dY = event.getY() - prevY;
-
-            prevX = event.getX();
-            prevY = event.getY();
-
-            model.moveBox(iModel.getSelected(), dX, dY);
-        }
-
-        public void handleReleased(MouseEvent event) {
-            currentState = portalReady;
-        }
-
-        public void handleKeyReleased(KeyEvent event) {
-            currentState = ready;
-        }
-
-    };
-
-
-    ControllerState portalPanning = new ControllerState() {
-
-        @Override
-        public void handlePressed(MouseEvent event) {
-            prevX = event.getX();
-            prevY = event.getY();
-        }
-
-        @Override
-        public void handleDragged(MouseEvent event) {
-
-            dX = (prevX - event.getX()) / ((Portal) iModel.getSelected()).getScale();
-            dY = (prevY - event.getY()) / ((Portal) iModel.getSelected()).getScale();
-
-            prevX = event.getX();
-            prevY = event.getY();
-
-            Portal portal = (Portal) iModel.getSelected();
-            portal.setPLeft(portal.getPLeft() - dX);
-            portal.setPTop(portal.getPTop() - dY);
-
-            model.notifySubscribers();
-        }
-
-        public void handleReleased(MouseEvent event) {
-            currentState = portalReady;
-        }
-
-        @Override
-        public void handleKeyReleased(KeyEvent event) {
-            currentState = ready;
-        }
 
     };
 

@@ -161,8 +161,8 @@ public class MiniController {
                 prevX = event.getX();
                 prevY = event.getY();
 
-                dX /= portal.getScale();
-                dY /= portal.getScale();
+                dX *= portal.getScale();
+                dY *= portal.getScale();
 
                 portal.setPLeft(portal.getPLeft() - dX);
                 portal.setPTop(portal.getPTop() - dY);
