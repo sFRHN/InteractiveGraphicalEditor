@@ -45,7 +45,7 @@ public class AppController {
 
 
             // Check if control is pressed and pressing on a portal
-            if (event.isControlDown() && model.whichBox(prevX, prevY) instanceof Portal portal) {
+            if (event.isControlDown() && model.whichBox(adjustedX, adjustedY) instanceof Portal portal) {
                 portalX = adjustedX - portal.getX() - portal.getPLeft();
                 portalY = adjustedY - portal.getY() - portal.getPTop();
 
