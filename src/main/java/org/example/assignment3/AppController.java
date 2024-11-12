@@ -208,11 +208,6 @@ public class AppController {
         }
 
         @Override
-        public void handleReleased(MouseEvent event) {
-            currentState = ready;
-        }
-
-        @Override
         public void handleKeyReleased(KeyEvent event) {
             currentState = ready;
         }
