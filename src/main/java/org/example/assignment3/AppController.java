@@ -87,6 +87,19 @@ public class AppController {
                 case SHIFT:
                     currentState = panning;
                     break;
+                case UP:
+                    if (iModel.getSelected() != null && iModel.getSelected() instanceof Portal portal) {
+                        portal.setScale(portal.getScale() + 0.1);
+                        model.notifySubscribers();
+                    }
+                    break;
+
+                case DOWN:
+                    if (iModel.getSelected() != null && iModel.getSelected() instanceof Portal portal) {
+                        portal.setScale(portal.getScale() - 0.1);
+                        model.notifySubscribers();
+                    }
+                    break;
                 default:
                     break;
             }

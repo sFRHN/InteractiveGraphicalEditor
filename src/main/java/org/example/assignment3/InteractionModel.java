@@ -38,7 +38,7 @@ public class InteractionModel {
         notifySubscribers();
     }
     public void addSubscriber(Subscriber sub) { subs.add(sub); }
-    private void notifySubscribers() { subs.forEach(Subscriber::modelChanged); }
+    public void notifySubscribers() { subs.forEach(Subscriber::modelChanged); }
 
     public void moveViewport(double dX, double dY) {
 
