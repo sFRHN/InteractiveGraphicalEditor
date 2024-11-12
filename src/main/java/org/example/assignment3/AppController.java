@@ -208,6 +208,16 @@ public class AppController {
         }
 
         @Override
+        public void handleReleased(MouseEvent event) {
+            if (event.isControlDown()) {
+                currentState = ready;
+            }
+            else {
+                currentState = panning;
+            }
+        }
+
+        @Override
         public void handleKeyReleased(KeyEvent event) {
             currentState = ready;
         }
