@@ -252,6 +252,9 @@ public class AppController {
                 }
 
             }
+            else if (model.whichBox(adjustedX, adjustedY) != null) {
+                currentState = ready;
+            }
             else {
                 currentState = portalPrep;
             }
