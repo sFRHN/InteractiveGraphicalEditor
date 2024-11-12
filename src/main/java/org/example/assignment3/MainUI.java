@@ -33,7 +33,11 @@ public class MainUI extends StackPane {
         iModel.addSubscriber(View);
         iModel.addSubscriber(miniView);
 
-        Platform.runLater(View::requestFocus);
+        Platform.runLater(() -> {
+            View.requestFocus();
+            iModel.setViewWidth(View.ViewWidth());
+            iModel.setViewHeight(View.ViewHeight());
+        });
         this.getChildren().addAll(View, miniView);
     }
 

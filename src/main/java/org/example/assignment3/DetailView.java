@@ -21,6 +21,7 @@ public class DetailView extends StackPane implements Subscriber{
         gc = myCanvas.getGraphicsContext2D();
 
         this.widthProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Wdith Listener NV: " + newValue);
             this.width = newValue.doubleValue();
             myCanvas.setWidth(this.width);
             iModel.setViewWidth(this.width);
@@ -28,6 +29,7 @@ public class DetailView extends StackPane implements Subscriber{
         });
 
         this.heightProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Hdith Listener NV: " + newValue);
             this.height = newValue.doubleValue();
             myCanvas.setHeight(this.height);
             iModel.setViewHeight(this.height);
@@ -126,8 +128,11 @@ public class DetailView extends StackPane implements Subscriber{
         
     }
 
+    public Canvas getCanvas() {return myCanvas; }
     public double ViewWidth() { return width; }
     public double ViewHeight() { return height; }
+    public void setViewWidth(double w) { width = w; }
+    public void setViewHeight(double h) { height = h; }
     public void setModel(EntityModel m) { this.model = m; }
     public void setiModel(InteractionModel im) { this.iModel = im; }
 
