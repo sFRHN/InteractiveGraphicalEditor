@@ -43,8 +43,12 @@ public class MiniController {
             prevX = event.getX();
             prevY = event.getY();
 
+            if (event.isShiftDown()) {
+                currentState = panning;
+            }
+
             // Check if control is pressed and pressing on a portal
-            if (event.isControlDown() && model.whichBox(prevX/scale, prevY/scale) instanceof Portal portal) {
+            else if (event.isControlDown() && model.whichBox(prevX/scale, prevY/scale) instanceof Portal portal) {
                 portalX = (prevX/scale) - portal.getX() - portal.getPLeft();
                 portalY = (prevY/scale) - portal.getY() - portal.getPTop();
 
@@ -152,13 +156,13 @@ public class MiniController {
         @Override
         public void handleDragged(MouseEvent event) {
 
+            dX = prevX - event.getX();
+            dY = prevY - event.getY();
+
+            prevX = event.getX();
+            prevY = event.getY();
+
             if (event.isControlDown() && iModel.getSelected() instanceof Portal portal) {
-
-                dX = prevX - event.getX();
-                dY = prevY - event.getY();
-
-                prevX = event.getX();
-                prevY = event.getY();
 
                 dX *= portal.getScale();
                 dY *= portal.getScale();
@@ -167,6 +171,9 @@ public class MiniController {
                 portal.setPTop(portal.getPTop() - dY);
                 model.notifySubscribers();
 
+            }
+            else {
+                iModel.moveViewport(dX, dY);
             }
         }
 
