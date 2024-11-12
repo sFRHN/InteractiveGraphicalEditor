@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 
 public class MiniView extends DetailView {
 
-    private double size = 200;
+    private double size = 300;
     private final GraphicsContext gc;
     private final Canvas myCanvas;
     private double scale;
