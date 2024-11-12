@@ -9,7 +9,7 @@ public class MiniController {
     private EntityModel model;
     private InteractionModel iModel;
     private ControllerState currentState;
-    private double prevX, prevY, dX, dY;
+    private double prevX, prevY, dX, dY, portalX, portalY;
     private double scale;
 
     public abstract static class ControllerState {
@@ -40,21 +40,20 @@ public class MiniController {
 
         @Override
         public void handlePressed(MouseEvent event) {
+
             prevX = event.getX();
             prevY = event.getY();
 
-            if (iModel.getSelected() != null && iModel.onHandle(prevX/scale, prevY/scale)) {
+            if (iModel.getSelected() != null && iModel.onHandle(prevX / scale, prevY / scale)) {
                 currentState = resizing;
-            }
-
-            else if (model.contains(prevX/scale, prevY/scale)) {
-                iModel.setSelected(model.whichBox(prevX/scale, prevY/scale));
+            } else if (model.contains(prevX / scale, prevY / scale)) {
+                iModel.setSelected(model.whichBox(prevX / scale, prevY / scale));
                 currentState = dragging;
-            }
-            else {
+            } else {
                 currentState = preparing;
             }
         }
+
 
         @Override
         public void handleKeyPressed(KeyEvent event) {
@@ -68,6 +67,9 @@ public class MiniController {
                     break;
                 case SHIFT:
                     currentState = panning;
+                    break;
+                case CONTROL:
+                    currentState = portalReady;
                     break;
                 default:
                     break;
@@ -211,7 +213,167 @@ public class MiniController {
             currentState = ready;
         }
 
+    };
+
+
+    ControllerState portalReady = new ControllerState() {
+
+        public void handlePressed(MouseEvent event) {
+
+            System.out.println("Got to portalReady");
+
+            prevX = event.getX();
+            prevY = event.getY();
+
+
+            // If clicked on a portal
+            if (model.whichBox(prevX/scale, prevY/scale) instanceof Portal portal) {
+
+                // Find point inside the portal
+                portalX = prevX/scale - portal.getX() - portal.getPLeft();
+                portalY = prevY/scale - portal.getY() - portal.getPTop();
+
+                // Convert to world coordinates
+                portalX /= portal.getScale();
+                portalY /= portal.getScale();
+
+                iModel.setSelected(model.whichBox(prevX/scale, prevY/scale));
+
+                if (model.contains(portalX, portalY)){
+                    iModel.setSelected(model.whichBox(portalX, portalY));
+                    currentState = portalDragging;
+                }
+                else {
+                    currentState = portalPanning;
+                }
+
+            }
+            else if (model.whichBox(prevX / scale, prevX / scale) != null) {
+                currentState = ready;
+            }
+            else {
+                currentState = portalPrep;
+            }
+
+        }
+
+        public void handleReleased(MouseEvent event) {
+            currentState = ready;
+        }
+
+        public void handleKeyReleased(KeyEvent event) {
+            currentState = ready;
+        }
 
     };
+
+
+    ControllerState portalPrep = new ControllerState() {
+
+        public void handleDragged(MouseEvent event) {
+            model.addPortal(prevX/scale, prevY/scale, 1, 1);
+            iModel.setSelected(model.whichBox(prevX/scale, prevY/scale));
+            currentState = portalCreating;
+        }
+
+        public void handleReleased(MouseEvent event) {
+            iModel.setSelected(null);
+            currentState = ready;
+        }
+
+        public void handleKeyReleased(KeyEvent event) {
+            currentState = ready;
+        }
+
+    };
+
+    ControllerState portalCreating = new ControllerState() {
+
+        public void handleDragged(MouseEvent event) {
+
+            double newX = Math.min(event.getX()/scale , prevX/scale);
+            double newY = Math.min(event.getY()/scale, prevY/scale);
+            double newWidth = Math.abs(event.getX() - prevX);
+            double newHeight = Math.abs(event.getY() - prevY);
+
+            iModel.getSelected().changePosition(newX, newY);
+            iModel.getSelected().setWidth(newWidth/scale);
+            iModel.getSelected().setHeight(newHeight/scale);
+
+            model.notifySubscribers();
+        }
+
+        public void handleReleased(MouseEvent event) {
+            currentState = portalReady;
+        }
+
+        public void handleKeyReleased(KeyEvent event) {
+            currentState = ready;
+        }
+
+    };
+
+
+    ControllerState portalDragging = new ControllerState() {
+
+        public void handleDragged(MouseEvent event) {
+
+            dX = event.getX() - prevX;
+            dY = event.getY() - prevY;
+
+            prevX = event.getX();
+            prevY = event.getY();
+
+            model.moveBox(iModel.getSelected(), dX/scale, dY/scale);
+        }
+
+        public void handleReleased(MouseEvent event) {
+            currentState = portalReady;
+        }
+
+        public void handleKeyReleased(KeyEvent event) {
+            currentState = ready;
+        }
+
+    };
+
+
+    ControllerState portalPanning = new ControllerState() {
+
+        @Override
+        public void handlePressed(MouseEvent event) {
+            prevX = event.getX();
+            prevY = event.getY();
+        }
+
+        @Override
+        public void handleDragged(MouseEvent event) {
+
+            dX = (prevX - event.getX()) / ((Portal) iModel.getSelected()).getScale();
+            dY = (prevY - event.getY()) / ((Portal) iModel.getSelected()).getScale();
+
+            prevX = event.getX();
+            prevY = event.getY();
+
+            Portal portal = (Portal) iModel.getSelected();
+            portal.setPLeft(portal.getPLeft() - dX);
+            portal.setPTop(portal.getPTop() - dY);
+
+            model.notifySubscribers();
+        }
+
+        public void handleReleased(MouseEvent event) {
+            currentState = portalReady;
+        }
+
+        @Override
+        public void handleKeyReleased(KeyEvent event) {
+            currentState = ready;
+        }
+
+    };
+
+
+
 
 }
