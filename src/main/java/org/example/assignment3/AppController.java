@@ -1,6 +1,5 @@
 package org.example.assignment3;
 
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
@@ -234,27 +233,77 @@ public class AppController {
             double dX = newX - adjustedX;
             double dY = newY - adjustedY;
 
+            Box selectedBox = iModel.getSelected();
             String handle = iModel.whichHandle(adjustedX, adjustedY);
+
             switch (handle) {
                 case "topLeftHandle":
-                    iModel.getSelected().changePosition(iModel.getSelected().getX() + dX, iModel.getSelected().getY() + dY);
-                    iModel.getSelected().setWidth(iModel.getSelected().getWidth() - dX);
-                    iModel.getSelected().setHeight(iModel.getSelected().getHeight() - dY);
+                    selectedBox.changePosition(selectedBox.getX() + dX, selectedBox.getY() + dY);
+                    selectedBox.setWidth(selectedBox.getWidth() - dX);
+                    selectedBox.setHeight(selectedBox.getHeight() - dY);
+
+                    if (selectedBox.getWidth() < 0) {
+                        handle = "topRightHandle";
+                        selectedBox.changePosition(selectedBox.getX() + selectedBox.getWidth(), selectedBox.getY());
+                        selectedBox.setWidth(-selectedBox.getWidth());
+                    }
+                    if (selectedBox.getHeight() < 0) {
+                        handle = "bottomLeftHandle";
+                        selectedBox.changePosition(selectedBox.getX(), selectedBox.getY() + selectedBox.getHeight());
+                        selectedBox.setHeight(-selectedBox.getHeight());
+                    }
                     break;
+
                 case "topRightHandle":
-                    iModel.getSelected().changePosition(iModel.getSelected().getX(), iModel.getSelected().getY() + dY);
-                    iModel.getSelected().setWidth(iModel.getSelected().getWidth() + dX);
-                    iModel.getSelected().setHeight(iModel.getSelected().getHeight() - dY);
+                    selectedBox.changePosition(selectedBox.getX(), selectedBox.getY() + dY);
+                    selectedBox.setWidth(selectedBox.getWidth() + dX);
+                    selectedBox.setHeight(selectedBox.getHeight() - dY);
+
+                    if (selectedBox.getWidth() < 0) {
+                        handle = "topLeftHandle";
+                        selectedBox.changePosition(selectedBox.getX() + selectedBox.getWidth(), selectedBox.getY());
+                        selectedBox.setWidth(-selectedBox.getWidth());
+                    }
+                    if (selectedBox.getHeight() < 0) {
+                        handle = "bottomRightHandle";
+                        selectedBox.changePosition(selectedBox.getX(), selectedBox.getY() + selectedBox.getHeight());
+                        selectedBox.setHeight(-selectedBox.getHeight());
+                    }
                     break;
+
                 case "bottomLeftHandle":
-                    iModel.getSelected().changePosition(iModel.getSelected().getX() + dX, iModel.getSelected().getY());
-                    iModel.getSelected().setWidth(iModel.getSelected().getWidth() - dX);
-                    iModel.getSelected().setHeight(iModel.getSelected().getHeight() + dY);
+                    selectedBox.changePosition(selectedBox.getX() + dX, selectedBox.getY());
+                    selectedBox.setWidth(selectedBox.getWidth() - dX);
+                    selectedBox.setHeight(selectedBox.getHeight() + dY);
+
+                    if (selectedBox.getWidth() < 0) {
+                        handle = "bottomRightHandle";
+                        selectedBox.changePosition(selectedBox.getX() + selectedBox.getWidth(), selectedBox.getY());
+                        selectedBox.setWidth(-selectedBox.getWidth());
+                    }
+                    if (selectedBox.getHeight() < 0) {
+                        handle = "topLeftHandle";
+                        selectedBox.changePosition(selectedBox.getX(), selectedBox.getY() + selectedBox.getHeight());
+                        selectedBox.setHeight(-selectedBox.getHeight());
+                    }
                     break;
+
                 case "bottomRightHandle":
-                    iModel.getSelected().setWidth(iModel.getSelected().getWidth() + dX);
-                    iModel.getSelected().setHeight(iModel.getSelected().getHeight() + dY);
+                    selectedBox.setWidth(selectedBox.getWidth() + dX);
+                    selectedBox.setHeight(selectedBox.getHeight() + dY);
+
+                    if (selectedBox.getWidth() < 0) {
+                        handle = "bottomLeftHandle";
+                        selectedBox.changePosition(selectedBox.getX() + selectedBox.getWidth(), selectedBox.getY());
+                        selectedBox.setWidth(-selectedBox.getWidth());
+                    }
+                    if (selectedBox.getHeight() < 0) {
+                        handle = "topRightHandle";
+                        selectedBox.changePosition(selectedBox.getX(), selectedBox.getY() + selectedBox.getHeight());
+                        selectedBox.setHeight(-selectedBox.getHeight());
+                    }
                     break;
+
                 default:
                     break;
             }
