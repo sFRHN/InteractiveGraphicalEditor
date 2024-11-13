@@ -209,7 +209,7 @@ public class MiniController {
 
             // If panning the viewport
             else {
-                iModel.moveViewport(dX, dY);
+                iModel.moveViewport(dX/scale, dY/scale);
             }
         }
 
