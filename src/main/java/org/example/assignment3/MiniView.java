@@ -145,6 +145,8 @@ public class MiniView extends DetailView {
         gc.clip();
         gc.translate(portal.getX() + portal.getPLeft(), portal.getY() + portal.getPTop());
         gc.scale(portal.getScale(), portal.getScale());
+        gc.strokeRect(0, 0, iModel.getWorldSize(), iModel.getWorldSize());
+        gc.strokeLine(0, 0, iModel.getWorldSize(), iModel.getWorldSize());
         model.getBoxes().forEach(entity -> {
             if (entity instanceof Portal) {
                 drawPortal((Portal)entity, depth + 1);
