@@ -5,6 +5,9 @@
  */
 
 
+Repository Name: CMPT381-2024-A3 / bcl568
+
+
 Extract the folder -> Open the project in IntelliJ -> "Trust this project"
 Wait a few seconds until the configuration is loaded.
 The project can be run by running the "EditorApp" class.
