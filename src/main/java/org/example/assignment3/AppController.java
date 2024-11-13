@@ -10,6 +10,9 @@ public class AppController {
     private ControllerState currentState;
     private double prevX, prevY, dX, dY, adjustedX, adjustedY, portalX, portalY;
 
+    /**
+     * Abstract class for the different states of the controller
+     */
     public abstract static class ControllerState {
         void handlePressed(MouseEvent event) {}
         void handleDragged(MouseEvent event) {}
@@ -18,6 +21,9 @@ public class AppController {
         void handleKeyReleased(KeyEvent event) {}
     }
 
+    /**
+     * Constructor for the AppController
+     */
     public AppController() {
         currentState = ready;
     }
@@ -25,6 +31,9 @@ public class AppController {
     public void setModel(EntityModel model) { this.model = model; }
     public void setiModel(InteractionModel iModel) { this.iModel = iModel; }
 
+    /**
+     * Handle methods for the different states
+     */
     public void handlePressed(MouseEvent event) { currentState.handlePressed(event); }
     public void handleDragged(MouseEvent event) { currentState.handleDragged(event); }
     public void handleReleased(MouseEvent event) { currentState.handleReleased(event); }
@@ -32,7 +41,9 @@ public class AppController {
     public void handleKeyReleased(KeyEvent event) { currentState.handleKeyReleased(event); }
 
 
-
+    /**
+     * Ready state for the controller
+     */
     ControllerState ready = new ControllerState() {
 
         @Override
@@ -61,9 +72,11 @@ public class AppController {
                     currentState = panning;
                 }
             }
+            // Check if clicking on a handle
             else if (iModel.getSelected() != null && iModel.onHandle(adjustedX, adjustedY)) {
                 currentState = resizing;
             }
+            // Check if clicking on a box
             else if (model.contains(adjustedX, adjustedY)) {
                 iModel.setSelected(model.whichBox(adjustedX, adjustedY));
                 currentState = dragging;
@@ -78,6 +91,7 @@ public class AppController {
             switch (event.getCode()) {
                 case DELETE:
                 case BACK_SPACE:
+                    // Delete selected box
                     if (iModel.getSelected() != null) {
                         model.deleteBox(iModel.getSelected());
                         iModel.setSelected(null);
@@ -87,6 +101,7 @@ public class AppController {
                     currentState = panning;
                     break;
                 case UP:
+                    // Increase scale of selected portal
                     if (iModel.getSelected() != null && iModel.getSelected() instanceof Portal portal) {
                         portal.setScale(portal.getScale() + 0.1);
                         model.notifySubscribers();
@@ -94,6 +109,7 @@ public class AppController {
                     break;
 
                 case DOWN:
+                    // Decrease scale of selected portal
                     if (iModel.getSelected() != null && iModel.getSelected() instanceof Portal portal) {
                         portal.setScale(portal.getScale() - 0.1);
                         model.notifySubscribers();
@@ -107,13 +123,18 @@ public class AppController {
     };
 
 
+    /**
+     * Preparing state for the controller
+     */
     ControllerState preparing = new ControllerState() {
 
         @Override
         public void handleDragged(MouseEvent event) {
+            // Creating a portal
             if (event.isControlDown()) {
                 model.addPortal(adjustedX, adjustedY, 1, 1);
             }
+            // Creating a box
             else {
                 model.addBox(adjustedX, adjustedY, 1, 1);
             }
@@ -131,10 +152,15 @@ public class AppController {
     };
 
 
+    /**
+     * Creating state for the controller
+     */
     ControllerState creating = new ControllerState() {
 
         @Override
         public void handleDragged(MouseEvent event) {
+
+            // Calculate new position and size of the box
             double newX = Math.min(event.getX() + iModel.getViewLeft(), prevX + iModel.getViewLeft());
             double newY = Math.min(event.getY() + iModel.getViewTop(), prevY + iModel.getViewTop());
             double newWidth = Math.abs(event.getX() - prevX);
@@ -155,10 +181,14 @@ public class AppController {
     };
 
 
+    /**
+     * Dragging state for the controller
+     */
     ControllerState dragging = new ControllerState() {
 
         public void handleDragged(MouseEvent event) {
 
+            // Calculate the change in position
             dX = event.getX() - prevX;
             dY = event.getY() - prevY;
 
@@ -175,6 +205,9 @@ public class AppController {
     };
 
 
+    /**
+     * Panning state for the controller
+     */
     ControllerState panning = new ControllerState() {
 
         @Override
@@ -186,12 +219,14 @@ public class AppController {
         @Override
         public void handleDragged(MouseEvent event) {
 
+            // Calculate the change in position
             dX = prevX - event.getX();
             dY = prevY - event.getY();
 
             prevX = event.getX();
             prevY = event.getY();
 
+            // If panning in the portal
             if (event.isControlDown() && iModel.getSelected() instanceof Portal portal) {
 
                 dX *= portal.getScale();
@@ -201,6 +236,7 @@ public class AppController {
                 portal.setPTop(portal.getPTop() - dY);
                 model.notifySubscribers();
             }
+            // If panning the viewport
             else {
                 iModel.moveViewport(dX, dY);
             }
@@ -224,10 +260,15 @@ public class AppController {
     };
 
 
+    /**
+     * Resizing state for the controller
+     */
     ControllerState resizing = new ControllerState() {
 
         @Override
         public void handleDragged(MouseEvent event) {
+
+            // Calculate the change in position
             double newX = event.getX() + iModel.getViewLeft();
             double newY = event.getY() + iModel.getViewTop();
             double dX = newX - adjustedX;
@@ -236,6 +277,7 @@ public class AppController {
             Box selectedBox = iModel.getSelected();
             String handle = iModel.whichHandle(adjustedX, adjustedY);
 
+            // Resize the box based on the handle
             switch (handle) {
                 case "topLeftHandle":
                     selectedBox.changePosition(selectedBox.getX() + dX, selectedBox.getY() + dY);

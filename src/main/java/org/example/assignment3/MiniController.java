@@ -11,6 +11,18 @@ public class MiniController {
     private double prevX, prevY, dX, dY, portalX, portalY;
     private double scale;
 
+
+    /**
+     * MiniController Constructor
+     */
+    public MiniController() {
+        currentState = ready;
+    }
+
+
+    /**
+     * Abstract class for the different states of the controller
+     */
     public abstract static class ControllerState {
         void handlePressed(MouseEvent event) {}
         void handleDragged(MouseEvent event) {}
@@ -19,10 +31,8 @@ public class MiniController {
         void handleKeyReleased(KeyEvent event) {}
     }
 
-    public MiniController() {
-        currentState = ready;
-    }
 
+    // Getters and Setters
     public void setModel(EntityModel model) { this.model = model; }
     public void setiModel(InteractionModel iModel) { this.iModel = iModel; }
     public void setScale(double scale) { this.scale = scale; }
@@ -34,7 +44,9 @@ public class MiniController {
     public void handleKeyReleased(KeyEvent event) { currentState.handleKeyReleased(event); }
 
 
-
+    /**
+     * Different states of the controller
+     */
     ControllerState ready = new ControllerState() {
 
         @Override
@@ -65,9 +77,12 @@ public class MiniController {
                 }
             }
 
+            // Check if clicking on a handle
             else if (iModel.getSelected() != null && iModel.onHandle(prevX / scale, prevY / scale)) {
                 currentState = resizing;
-            } else if (model.contains(prevX / scale, prevY / scale)) {
+            }
+            // Check if clicking on a box
+            else if (model.contains(prevX / scale, prevY / scale)) {
                 iModel.setSelected(model.whichBox(prevX / scale, prevY / scale));
                 currentState = dragging;
             } else {
@@ -78,13 +93,18 @@ public class MiniController {
     };
 
 
+    /**
+     * Preparing state for the controller
+     */
     ControllerState preparing = new ControllerState() {
 
         @Override
         public void handleDragged(MouseEvent event) {
+            // Creating a portal
             if (event.isControlDown()) {
                 model.addPortal(prevX/scale, prevY/scale, 1, 1);
             }
+            // Creating a box
             else {
                 model.addBox(prevX/scale, prevY/scale, 1/scale,1/scale);
             }
@@ -101,10 +121,15 @@ public class MiniController {
     };
 
 
+    /**
+     * Creating state for the controller
+     */
     ControllerState creating = new ControllerState() {
 
         @Override
         public void handleDragged(MouseEvent event) {
+
+            // Calculate new position and size of the box
             double newX = Math.min(event.getX()/scale, prevX/scale);
             double newY = Math.min(event.getY()/scale, prevY/scale);
             double newWidth = Math.abs(event.getX() - prevX);
@@ -125,10 +150,14 @@ public class MiniController {
     };
 
 
+    /**
+     * Dragging state for the controller
+     */
     ControllerState dragging = new ControllerState() {
 
         public void handleDragged(MouseEvent event) {
 
+            // Calculate the change in position
             dX = event.getX() - prevX;
             dY = event.getY() - prevY;
 
@@ -145,6 +174,9 @@ public class MiniController {
     };
 
 
+    /**
+     * Panning state for the controller
+     */
     ControllerState panning = new ControllerState() {
 
         @Override
@@ -156,12 +188,14 @@ public class MiniController {
         @Override
         public void handleDragged(MouseEvent event) {
 
+            // Calculate the change in position
             dX = prevX - event.getX();
             dY = prevY - event.getY();
 
             prevX = event.getX();
             prevY = event.getY();
 
+            // If panning in the portal
             if (event.isControlDown() && iModel.getSelected() instanceof Portal portal) {
 
                 dX *= portal.getScale();
@@ -172,6 +206,8 @@ public class MiniController {
                 model.notifySubscribers();
 
             }
+
+            // If panning the viewport
             else {
                 iModel.moveViewport(dX, dY);
             }
@@ -185,9 +221,14 @@ public class MiniController {
     };
 
 
+    /**
+     * Resizing state for the controller
+     */
     ControllerState resizing = new ControllerState() {
 
         public void handleDragged(MouseEvent event) {
+
+            // Calculate the change in position
             double newX = event.getX();
             double newY = event.getY();
             double dX = (newX - prevX)/scale;
@@ -197,6 +238,7 @@ public class MiniController {
             Box selectedBox = iModel.getSelected();
             String handle = iModel.whichHandle(prevX/scale, prevY/scale);
 
+            // Resize the box based on the handle
             switch (handle) {
                 case "topLeftHandle":
                     selectedBox.changePosition(selectedBox.getX() + dX, selectedBox.getY() + dY);

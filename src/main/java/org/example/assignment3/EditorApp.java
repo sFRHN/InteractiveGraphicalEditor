@@ -9,6 +9,11 @@ import java.io.IOException;
 public class EditorApp extends Application {
 
 
+    /**
+     * Start the application
+     * @param stage the stage
+     * @throws IOException if the FXML file is not found
+     */
     @Override
     public void start(Stage stage) throws IOException {
         MainUI root = new MainUI();

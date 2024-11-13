@@ -33,6 +33,10 @@ public class MainUI extends StackPane {
         iModel.addSubscriber(View);
         iModel.addSubscriber(miniView);
 
+
+        // Force the view to be focused when the application starts
+        // Resetting the view width and height in the InteractionModel here fixes the initial size of the rectangle
+        // inside miniView
         Platform.runLater(() -> {
             View.requestFocus();
             iModel.setViewWidth(View.ViewWidth());

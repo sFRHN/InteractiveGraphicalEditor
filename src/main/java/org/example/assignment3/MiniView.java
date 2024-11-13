@@ -14,6 +14,10 @@ public class MiniView extends DetailView {
     private double scale;
     private int MAX_DEPTH = 3;
 
+
+    /**
+     * MiniView Constructor
+     */
     public MiniView() {
         super();
         myCanvas = new Canvas(size, size);
@@ -25,6 +29,10 @@ public class MiniView extends DetailView {
         opacityProperty().set(0.5);
     }
 
+    /**
+     * Setup the events for the MiniView
+     * @param controller the MiniController
+     */
     public void setupEvents(MiniController controller) {
         myCanvas.setOnMousePressed(e -> {
             controller.setScale(scale);
@@ -42,6 +50,9 @@ public class MiniView extends DetailView {
         setOnKeyReleased(controller::handleKeyReleased);
     }
 
+    /**
+     * Draw the boxes and portals on the canvas of the MiniView
+     */
     @Override
     public void draw() {
         scale = this.size / iModel.getWorldSize();
@@ -88,6 +99,10 @@ public class MiniView extends DetailView {
     }
 
 
+    /**
+     * Draw the box on the canvas
+     * @param entity the box to draw
+     */
     private void drawBox(Box entity) {
 
         if (iModel.getSelected() == entity) {
@@ -106,6 +121,12 @@ public class MiniView extends DetailView {
 
     }
 
+
+    /**
+     * Draw the portal on the canvas
+     * @param portal the portal to draw
+     * @param depth the depth of the portal
+     */
     private void drawPortal(Portal portal, double depth) {
 
         if (depth > MAX_DEPTH) return;
@@ -137,6 +158,10 @@ public class MiniView extends DetailView {
     }
 
 
+    /**
+     * Draw the handles on the selected box
+     * @param entity the box to draw handles for
+     */
     private void drawHandles(Box entity) {
         gc.setFill(Color.WHITE);
         double circleRadius = iModel.getHandleRadius();

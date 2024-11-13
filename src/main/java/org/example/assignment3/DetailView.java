@@ -14,12 +14,17 @@ public class DetailView extends StackPane implements Subscriber{
     private final Canvas myCanvas;
     private int MAX_DEPTH = 3;
 
+
+    /**
+     * DetailView Constructor
+     */
     public DetailView() {
         width = 800;
         height = 800;
         myCanvas = new Canvas(width, height);
         gc = myCanvas.getGraphicsContext2D();
 
+        // Add listeners to the width and height properties of the DetailView
         this.widthProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("Wdith Listener NV: " + newValue);
             this.width = newValue.doubleValue();
@@ -40,6 +45,11 @@ public class DetailView extends StackPane implements Subscriber{
         this.getChildren().add(myCanvas);
     }
 
+
+    /**
+     * Setup the events for the DetailView
+     * @param controller the AppController
+     */
     public void setupEvents(AppController controller) {
         myCanvas.setOnMousePressed(controller::handlePressed);
         myCanvas.setOnMouseDragged(controller::handleDragged);
@@ -48,6 +58,10 @@ public class DetailView extends StackPane implements Subscriber{
         setOnKeyReleased(controller::handleKeyReleased);
     }
 
+
+    /**
+     * Draw the boxes and portals on the canvas of the DetailView
+     */
     public void draw() {
         gc.clearRect(0, 0, myCanvas.getWidth(), myCanvas.getHeight());
         gc.save();
@@ -65,6 +79,11 @@ public class DetailView extends StackPane implements Subscriber{
         gc.restore();
     }
 
+
+    /**
+     * Draw the box on the canvas
+     * @param entity the box to draw
+     */
     private void drawBox(Box entity) {
 
         if (iModel.getSelected() == entity) {
@@ -83,6 +102,12 @@ public class DetailView extends StackPane implements Subscriber{
 
     }
 
+
+    /**
+     * Draw the portal on the canvas
+     * @param portal the portal to draw
+     * @param depth the depth of the portal
+     */
     private void drawPortal(Portal portal, double depth) {
 
         if (depth > MAX_DEPTH) return;
@@ -113,6 +138,11 @@ public class DetailView extends StackPane implements Subscriber{
 
     }
 
+
+    /**
+     * Draw the handles on the selected box
+     * @param entity the entity to draw the handles for
+     */
     private void drawHandles(Box entity) {
 
         gc.setFill(Color.WHITE);
