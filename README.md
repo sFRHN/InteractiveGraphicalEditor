@@ -1,11 +1,11 @@
 # Overview
-This project is a visual editor built in **JavaFX** that demonstrates skills in the following areas:  
+This project is a JavaFX-based visual editor designed for creating and manipulating objects within a visual workspace. It incorporates:
 - Model-View-Controller (MVC) architecture  
 - Multiple views  
 - Immediate-mode graphics  
-- Interaction with graphical elements  
+- Interaction with graphical elements
 
-The system serves as an interactive editor for creating and manipulating objects in a visual workspace.
+![Visual Editor Preview](Sample.png)
 
 ---
 
@@ -51,7 +51,6 @@ The system serves as an interactive editor for creating and manipulating objects
 - **Resize Rectangles**:  
   Circular handles appear on the corners of a selected rectangle for resizing.
 
----
 
 ### Portal-Specific Interactions
 - **Create a Portal**:  
@@ -65,11 +64,14 @@ The system serves as an interactive editor for creating and manipulating objects
 
 - **Zoom a Portal**:  
   - Press the **Up Arrow** key to zoom in on the portal's view.  
-  - Press the **Down Arrow** key to zoom out.  
+  - Press the **Down Arrow** key to zoom out.
+ 
+![Visual Editor Preview](Usage.gif)
 
 ---
 
-# Software Requirements
+# Notes
+- A separate controller has been created to handle interactions specifically for the **MiniView**.
 - The **DetailView** dynamically adjusts its size to fill the window and resizes as the window is resized.  
 - Fully adheres to the **MVC architecture** with proper separation of components and controlled access.  
 - Uses **publish-subscribe communication** between models and views.  
@@ -78,12 +80,4 @@ The system serves as an interactive editor for creating and manipulating objects
 ---
 
 # Running the Project
-1. Extract the folder.  
-2. Open the project in **IntelliJ** and click **"Trust this project"**.  
-3. Wait for the configuration to load.  
-4. Run the **EditorApp** class.
-
----
-
-# Notes
-- A separate controller has been created to handle interactions specifically for the **MiniView**.
+The project can be run by running the 'EditorApp' class.
